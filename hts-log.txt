@@ -1,0 +1,78 @@
+HTTrack3.49-2+htsswf+htsjava launched on Wed, 04 Feb 2026 16:36:14 at https://mainchannelbrewing.com/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qwC2%Ps2u1%s%uN0%I0p3DaK0H0%kf2A25000%f#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" https://mainchannelbrewing.com/ -O1 "C:\Users\mark_\OneDrive\Desktop\mainchannelbrewing\mainchannelbrewing" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+16:36:51	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/themes/craft-beer/fonts/Basic/Basic.ttf (from https://mainchannelbrewing.com/)
+16:36:51	Warning: 	Retry after error -4 (No data (connection closed)) at link https://mainchannelbrewing.com/xmlrpc.php?rsd (from https://mainchannelbrewing.com/)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/https:/mainchannelbrewing.com/wp-content/uploads/2025/04/hero_home_beer_01.jpg (from https://mainchannelbrewing.com/)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/https:/mainchannelbrewing.com/wp-content/plugins/bold-page-builder/img/blank.gif (from https://mainchannelbrewing.com/)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/https:/mainchannelbrewing.com/wp-content/uploads/2025/04/hero_home_beer_01-story-1.jpg (from https://mainchannelbrewing.com/)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_03.jpg (from https://mainchannelbrewing.com/)
+16:37:10	Warning: 	Retry after error 500 (Internal Server Error) at link https://mainchannelbrewing.com/wp-content/themes/craft-beer/ (from https://mainchannelbrewing.com/)
+16:37:10	Error: 	"Bad Request" (400) at link https://mainchannelbrewing.com/wp-admin/admin-ajax.php (from https://mainchannelbrewing.com/)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/bold-page-builder/fonts/FontAwesome5Regular.woff2?v=1.0.0 (from https://mainchannelbrewing.com/wp-content/plugins/bold-page-builder/css/front_end/content_elements.crush.css?ver=5.6.3)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/bold-page-builder/fonts/FontAwesome5Solid.woff2?v=1.0.0 (from https://mainchannelbrewing.com/wp-content/plugins/bold-page-builder/css/front_end/content_elements.crush.css?ver=5.6.3)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/loader.svg (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/credit-cards/visa.png (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/credit-cards/mastercard.png (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/credit-cards/laser.png (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/credit-cards/diners.png (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/credit-cards/maestro.png (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/credit-cards/jcb.png (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/credit-cards/amex.png (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/images/icons/credit-cards/discover.png (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/star.eot (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/star.eot? (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/star.woff (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/star.ttf (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/star.svg (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/WooCommerce.eot (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/WooCommerce.eot? (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/WooCommerce.woff (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/WooCommerce.ttf (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/wp-content/plugins/woocommerce/assets/fonts/WooCommerce.svg (from https://mainchannelbrewing.com/wp-content/themes/craft-beer/style.css?ver=6.9.1)
+16:37:10	Warning: 	Retry after error -4 (No data (connection closed)) at link https://mainchannelbrewing.com/xmlrpc.php?rsd (from https://mainchannelbrewing.com/)
+16:37:10	Warning: 	Moved Permanently for https://mainchannelbrewing.com/?p=15
+16:37:10	Warning: 	File has moved from https://mainchannelbrewing.com/?p=15 to https://mainchannelbrewing.com/about-us/
+16:37:11	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/https:/mainchannelbrewing.com/wp-content/uploads/2025/04/hero_inner_beer_01.jpg (from https://mainchannelbrewing.com/about-us/)
+16:37:11	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_03.jpg (from https://mainchannelbrewing.com/about-us/)
+16:37:11	Warning: 	Moved Permanently for https://mainchannelbrewing.com/?p=86
+16:37:11	Warning: 	File has moved from https://mainchannelbrewing.com/?p=86 to https://mainchannelbrewing.com/about-us/our-team/
+16:37:11	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/our-team/https:/mainchannelbrewing.com/wp-content/uploads/2025/04/hero_inner_beer_01.jpg (from https://mainchannelbrewing.com/about-us/our-team/)
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/our-team/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_03.jpg (from https://mainchannelbrewing.com/about-us/our-team/)
+16:37:18	Warning: 	Moved Permanently for https://mainchannelbrewing.com/?p=815
+16:37:18	Warning: 	File has moved from https://mainchannelbrewing.com/?p=815 to https://mainchannelbrewing.com/about-us/beer-menu/
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/beer-menu/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_menu_background_01.jpg (from https://mainchannelbrewing.com/about-us/beer-menu/)
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/beer-menu/https:/mainchannelbrewing.com/wp-content/uploads/2025/04/hero_home_beer_01-story-1.jpg (from https://mainchannelbrewing.com/about-us/beer-menu/)
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/beer-menu/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_03.jpg (from https://mainchannelbrewing.com/about-us/beer-menu/)
+16:37:18	Warning: 	Moved Permanently for https://mainchannelbrewing.com/?p=940
+16:37:18	Warning: 	File has moved from https://mainchannelbrewing.com/?p=940 to https://mainchannelbrewing.com/under-construction/
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/under-construction/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_menu_background_01.jpg (from https://mainchannelbrewing.com/under-construction/)
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/under-construction/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_03.jpg (from https://mainchannelbrewing.com/under-construction/)
+16:37:18	Warning: 	Moved Permanently for https://mainchannelbrewing.com/?p=17
+16:37:18	Warning: 	File has moved from https://mainchannelbrewing.com/?p=17 to https://mainchannelbrewing.com/about-us/contact/
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/contact/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_team.jpg (from https://mainchannelbrewing.com/about-us/contact/)
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/contact/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_03.jpg (from https://mainchannelbrewing.com/about-us/contact/)
+16:37:18	Warning: 	Retry after error 500 (Internal Server Error) at link https://mainchannelbrewing.com/wp-content/themes/craft-beer/ (from https://mainchannelbrewing.com/)
+16:37:18	Error: 	"No data (connection closed)" (-4) after 2 retries at link https://mainchannelbrewing.com/xmlrpc.php?rsd (from https://mainchannelbrewing.com/)
+16:37:18	Warning: 	Moved Permanently for https://mainchannelbrewing.com/?p=322
+16:37:18	Warning: 	File has moved from https://mainchannelbrewing.com/?p=322 to https://mainchannelbrewing.com/about-us/testimonials/
+16:37:18	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/testimonials/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_05.jpg (from https://mainchannelbrewing.com/about-us/testimonials/)
+16:37:24	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/testimonials/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_testimonials.jpg (from https://mainchannelbrewing.com/about-us/testimonials/)
+16:37:24	Error: 	"Internal Server Error" (500) after 2 retries at link https://mainchannelbrewing.com/wp-content/themes/craft-beer/ (from https://mainchannelbrewing.com/)
+16:37:24	Warning: 	Moved Permanently for https://mainchannelbrewing.com/?p=335
+16:37:24	Warning: 	File has moved from https://mainchannelbrewing.com/?p=335 to https://mainchannelbrewing.com/about-us/about-the-beer/
+16:37:24	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/about-the-beer/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_01.jpg (from https://mainchannelbrewing.com/about-us/about-the-beer/)
+16:37:29	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/about-the-beer/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_03.jpg (from https://mainchannelbrewing.com/about-us/about-the-beer/)
+16:37:29	Warning: 	Moved Permanently for https://mainchannelbrewing.com/?p=351
+16:37:29	Warning: 	File has moved from https://mainchannelbrewing.com/?p=351 to https://mainchannelbrewing.com/about-us/our-process/
+16:37:29	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/our-process/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_02-scaled-1.jpg (from https://mainchannelbrewing.com/about-us/our-process/)
+16:37:29	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/our-process/https:/mainchannelbrewing.com/wp-content/uploads/2025/04/hero_newsletter-1.jpg (from https://mainchannelbrewing.com/about-us/our-process/)
+16:37:29	Error: 	"Not Found" (404) at link https://mainchannelbrewing.com/about-us/our-process/https:/mainchannelbrewing.com/wp-content/uploads/2017/05/hero_inner_beer_03.jpg (from https://mainchannelbrewing.com/about-us/our-process/)
+
+HTTrack Website Copier/3.49-2 mirror complete in 1 minutes 15 seconds : 243 links scanned, 183 files written (25731532 bytes overall) [22940068 bytes received at 305867 bytes/sec], 9954950 bytes transferred using HTTP compression in 128 files, ratio 28%, 33.2 requests per connection
+(47 errors, 20 warnings, 0 messages)
