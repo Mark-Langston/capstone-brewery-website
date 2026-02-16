@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Main Channel Brewing - VPS Team Access Guide</title>
+  <meta name="description" content="Internal team documentation for SSH access, basic Linux navigation, editing files, permissions, GitHub workflow, and future MariaDB notes." />
+  <style>
+    :root{
+      --bg: #0b0f17;
+      --panel: #0f1624;
+      --text: #e7eaf0;
+      --muted: #a9b2c3;
+      --link: #8ab4ff;
+      --border: rgba(255,255,255,.10);
+      --codebg: rgba(255,255,255,.06);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+      --max: 1100px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root{
+        --bg: #f6f7fb;
+        --panel: #ffffff;
+        --text: #1b2430;
+        --muted: #506075;
+        --link: #1a5fd1;
+        --border: rgba(0,0,0,.10);
+        --codebg: rgba(0,0,0,.05);
+        --shadow: 0 10px 30px rgba(0,0,0,.10);
+      }
+    }
+
+    *{ box-sizing: border-box; }
+    html{ scroll-behavior: smooth; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background: radial-gradient(1200px 900px at 10% 0%, rgba(138,180,255,.16), transparent 55%),
+                  radial-gradient(900px 700px at 90% 10%, rgba(255,180,120,.10), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a{ color: var(--link); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background: color-mix(in srgb, var(--bg), transparent 12%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 12px 18px;
+      display:flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: space-between;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 240px;
+    }
+
+    .badge{
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(138,180,255,.95), rgba(255,180,120,.85));
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .brand h1{
+      font-size: 14px;
+      margin:0;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .brand .sub{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    nav{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    nav a{
+      font-size: 13px;
+      color: var(--text);
+      opacity: .9;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    nav a:hover{
+      text-decoration:none;
+      border-color: var(--border);
+      background: color-mix(in srgb, var(--panel), transparent 35%);
+    }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 22px 18px 60px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .hero{
+      background: color-mix(in srgb, var(--panel), transparent 0%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .hero h2{
+      margin: 0 0 8px;
+      font-size: 24px;
+      letter-spacing: .2px;
+    }
+
+    .hero p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 90ch;
+    }
+
+    .note{
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--panel), transparent 18%);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    section{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    section h3{
+      margin: 0 0 10px;
+      font-size: 18px;
+      letter-spacing: .2px;
+    }
+
+    section p{ margin: 10px 0; color: var(--text); }
+
+    ul, ol{ margin: 8px 0 0 18px; }
+    li{ margin: 6px 0; color: var(--text); }
+    .muted{ color: var(--muted); }
+
+    .kvs{
+      display:grid;
+      grid-template-columns: 180px 1fr;
+      gap: 8px 14px;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--panel), transparent 18%);
+    }
+    .kvs div:nth-child(odd){
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .kvs div:nth-child(even){
+      font-family: var(--mono);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    pre{
+      margin: 12px 0 0;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--codebg);
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    code{
+      font-family: var(--mono);
+      font-size: 0.95em;
+      background: var(--codebg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 900px){
+      .brand{ min-width: auto; }
+      .grid2{ grid-template-columns: 1fr; }
+      nav{ justify-content: flex-start; }
+    }
+
+    .footer{
+      max-width: var(--max);
+      margin: 18px auto 0;
+      padding: 0 18px 40px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pill{
+      display:inline-block;
+      margin-left: 8px;
+      font-size: 12px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: color-mix(in srgb, var(--panel), transparent 10%);
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="badge" aria-hidden="true"></div>
+        <div>
+          <h1>Main Channel Brewing <span class="pill">Internal</span></h1>
+          <div class="sub">VPS Team Access Guide</div>
+        </div>
+      </div>
+
+      <nav aria-label="Page navigation">
+        <a href="#ssh">SSH (Windows)</a>
+        <a href="#navigation">Linux Basics</a>
+        <a href="#files">Site Files</a>
+        <a href="#nano">Editing (nano)</a>
+        <a href="#directories">Folders</a>
+        <a href="#git">Git/GitHub</a>
+        <a href="#permissions">Privileges</a>
+        <a href="#mariadb">MariaDB</a>
+        <a href="#bestpractices">Best Practices</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <h2>VPS Team Access Guide</h2>
+      <p>
+        Internal documentation for the Main Channel Brewing website project. This page covers how to SSH into the VPS,
+        basic terminal navigation, where the site files live, how to edit files, how to create/delete folders and files,
+        how to push changes to the GitHub repository, and what team privileges enable.
+      </p>
+      <div class="note">
+        <strong>Reminder:</strong> This page is intended for the project team only. Treat server credentials and internal details as sensitive.
+      </div>
+    </div>
+
+    <section id="ssh">
+      <h3>1. SSH Access from Windows</h3>
+      <p class="muted">
+        Windows 10/11 includes an SSH client built into PowerShell and Command Prompt.
+      </p>
+
+      <div class="kvs" role="list">
+        <div role="listitem">Server IP</div><div>31.97.6.77</div>
+        <div role="listitem">SSH Command</div><div>ssh &lt;username&gt;@31.97.6.77</div>
+      </div>
+
+      <p><strong>Steps:</strong></p>
+      <ol>
+        <li>Open <strong>PowerShell</strong> (recommended) or <strong>Command Prompt</strong>.</li>
+        <li>Run the SSH command using your username.</li>
+        <li>Enter your password when prompted (nothing will appear while typing — that’s normal).</li>
+      </ol>
+
+      <pre><span class="muted"># Example</span>
+ssh emmy@31.97.6.77</pre>
+
+      <p class="muted">
+        To disconnect when finished, type <code>exit</code> and press Enter.
+      </p>
+    </section>
+
+    <section id="navigation">
+      <h3>2. Basic Linux Navigation Commands</h3>
+      <p>
+        Once logged in, you’ll work from the terminal. These commands are the basics for moving around and viewing files.
+      </p>
+
+      <div class="grid2">
+        <div>
+          <p><strong>Where am I?</strong></p>
+          <pre>pwd</pre>
+        </div>
+        <div>
+          <p><strong>List files</strong></p>
+          <pre>ls
+ls -la</pre>
+        </div>
+        <div>
+          <p><strong>Change directory</strong></p>
+          <pre>cd foldername
+cd ..</pre>
+        </div>
+        <div>
+          <p><strong>Clear screen</strong></p>
+          <pre>clear</pre>
+        </div>
+      </div>
+
+      <p class="muted">
+        Tip: Use the <strong>Tab</strong> key to auto-complete file and folder names.
+      </p>
+    </section>
+
+    <section id="files">
+      <h3>3. Website File Location</h3>
+      <p>
+        The website files are stored in the following directory on the VPS:
+      </p>
+
+      <pre>/var/www/brewery-site</pre>
+
+      <p><strong>Navigate there after you log in:</strong></p>
+      <pre>cd /var/www/brewery-site
+pwd
+ls -la</pre>
+
+      <p class="muted">
+        If you see project files (HTML/CSS/JS/images), you’re in the right place.
+      </p>
+    </section>
+
+    <section id="nano">
+      <h3>4. Editing Files with nano</h3>
+      <p>
+        <code>nano</code> is a simple terminal text editor (great for quick edits).
+      </p>
+
+      <p><strong>Open a file to edit:</strong></p>
+      <pre>nano index.html</pre>
+
+      <p><strong>Save and exit:</strong></p>
+      <ul>
+        <li><strong>Save:</strong> Press <code>CTRL</code> + <code>O</code>, then press <code>Enter</code></li>
+        <li><strong>Exit:</strong> Press <code>CTRL</code> + <code>X</code></li>
+        <li>If asked to save changes, press <code>Y</code> (yes) or <code>N</code> (no)</li>
+      </ul>
+
+      <div class="note">
+        <strong>Tip:</strong> If you’re editing a shared file, keep changes small and test them immediately after saving.
+      </div>
+    </section>
+
+    <section id="directories">
+      <h3>5. Creating and Managing Directories (Folders)</h3>
+      <p>
+        You may need to create folders for images, scripts, or other assets. Use <code>mkdir</code> to create folders,
+        and use <code>rm</code> to remove files or directories when needed.
+      </p>
+
+      <p><strong>Create a folder:</strong></p>
+      <pre>mkdir images</pre>
+
+      <p><strong>Create nested folders in one command:</strong></p>
+      <pre>mkdir -p assets/images
+mkdir -p assets/scripts</pre>
+
+      <p><strong>Verify files and folders:</strong></p>
+      <pre>ls -la</pre>
+
+      <h4 style="margin-top:16px; margin-bottom:6px;">Delete a File</h4>
+      <p class="muted">
+        Use <code>rm</code> to delete a file. This is permanent (there is no recycle bin).
+      </p>
+      <pre>rm filename.html</pre>
+
+      <p class="muted">
+        If you want to confirm before deletion, use interactive mode:
+      </p>
+      <pre>rm -i filename.html</pre>
+
+      <h4 style="margin-top:16px; margin-bottom:6px;">Delete a Directory (Folder)</h4>
+      <p class="muted">
+        If the folder is empty, use <code>rmdir</code>:
+      </p>
+      <pre>rmdir foldername</pre>
+
+      <p class="muted">
+        If the folder contains files, use recursive delete. Be careful—this deletes everything inside permanently:
+      </p>
+      <pre>rm -r foldername</pre>
+
+      <p class="muted">
+        If you want to be prompted before each removal (safer):
+      </p>
+      <pre>rm -ri foldername</pre>
+
+      <div class="note">
+        <strong>Safety tip:</strong> Before deleting, run <code>ls -la</code> and confirm you are in the correct directory.
+        A good habit is to check <code>pwd</code> first.
+      </div>
+
+      <p class="muted">
+        The project directory is configured so new folders inherit the shared <code>brewery</code> group automatically.
+      </p>
+    </section>
+
+    <section id="git">
+      <h3>6. Git + GitHub Workflow (Commit and Push Changes)</h3>
+      <p>
+        The website directory is connected to our GitHub repository. Use the workflow below to keep changes tracked and shareable.
+        <span class="muted">Prefer commits + pushes over “one-off” server edits when possible.</span>
+      </p>
+
+      <p><strong>Before you start work (recommended every session):</strong></p>
+      <pre>cd /var/www/brewery-site
+git status
+git pull</pre>
+
+      <p class="muted">
+        <strong>Why pull first?</strong> It reduces merge conflicts and ensures you’re building on the latest team changes.
+      </p>
+
+      <p><strong>Create a new branch for your work (recommended):</strong></p>
+      <pre>git checkout -b feature/short-description</pre>
+
+      <p><strong>After you edit files, check what changed:</strong></p>
+      <pre>git status
+git diff</pre>
+
+      <p><strong>Stage your changes:</strong></p>
+      <pre>git add .</pre>
+
+      <p class="muted">
+        If you only want to stage one file: <code>git add path/to/file.html</code>
+      </p>
+
+      <p><strong>Commit with a clear message:</strong></p>
+      <pre>git commit -m "Update merch page layout"</pre>
+
+      <p><strong>Push your branch to GitHub:</strong></p>
+      <pre>git push -u origin feature/short-description</pre>
+
+      <p><strong>Open a Pull Request (PR):</strong></p>
+      <ul>
+        <li>Go to GitHub in your browser.</li>
+        <li>Create a PR from your <code>feature/...</code> branch into <code>main</code>.</li>
+        <li>Request review from the team lead (Mark) or another reviewer.</li>
+      </ul>
+
+      <div class="note">
+        <strong>Team rule of thumb:</strong> Use branches + PRs for anything beyond small text edits. It keeps history clean and reduces risk.
+      </div>
+
+      <h4 style="margin-top:16px; margin-bottom:6px;">Common Git Commands (Quick Reference)</h4>
+      <pre>git branch                 # list branches
+git checkout main          # switch to main
+git pull                   # pull latest changes
+git log --oneline --max-count=10</pre>
+
+      <h4 style="margin-top:16px; margin-bottom:6px;">Common Issues and Fixes</h4>
+      <p class="muted"><strong>1) “Permission denied” while pushing:</strong> You may need GitHub credentials/token, or your SSH key isn’t set up.</p>
+      <p class="muted"><strong>2) “Local changes would be overwritten by merge”:</strong> Commit or stash your work before pulling.</p>
+      <pre>git status
+git stash
+git pull
+git stash pop</pre>
+
+      <p class="muted"><strong>3) Merge conflict:</strong> Git will mark the file. Edit it to resolve, then commit again.</p>
+      <pre>git status
+nano conflicted-file.html
+git add conflicted-file.html
+git commit -m "Resolve merge conflict"</pre>
+    </section>
+
+    <section id="permissions">
+      <h3>7. Team Permissions and Privileges</h3>
+      <p>
+        The team has two privilege layers:
+      </p>
+
+      <ul>
+        <li>
+          <strong>brewery group</strong> — allows the team to edit project files under
+          <code>/var/www/brewery-site</code> without needing sudo for normal file changes.
+        </li>
+        <li>
+          <strong>sudo group</strong> — allows administrative tasks by prefixing commands with <code>sudo</code>.
+        </li>
+      </ul>
+
+      <p><strong>Examples of sudo tasks:</strong></p>
+      <pre>sudo apt update
+sudo apt install &lt;package-name&gt;
+sudo systemctl restart nginx</pre>
+
+      <div class="note">
+        <strong>Best practice:</strong> Use <code>sudo</code> only when required. Most project work should be done without sudo.
+      </div>
+    </section>
+
+    <section id="mariadb">
+      <h3>8. Future MariaDB Access (When Implemented)</h3>
+      <p>
+        When we add MariaDB, database access will be controlled separately from SSH/system access.
+        Being in the <code>sudo</code> group allows installing and managing the MariaDB service at the OS level, but
+        database changes are governed by MariaDB user accounts and grants.
+      </p>
+
+      <p><strong>What team members may be allowed to do (depending on granted DB roles):</strong></p>
+      <ul>
+        <li>View tables and data</li>
+        <li>Insert and update records</li>
+        <li>Create or modify tables (if granted)</li>
+      </ul>
+
+      <p class="muted">
+        We will create separate MariaDB accounts for team members and assign appropriate privileges once the database is installed.
+      </p>
+    </section>
+
+    <section id="bestpractices">
+      <h3>9. Best Practices</h3>
+      <ul>
+        <li>Always confirm your current directory with <code>pwd</code> before editing or creating files.</li>
+        <li>Use <code>ls -la</code> to review what’s in a folder before making changes.</li>
+        <li>Pull before you push: <code>git pull</code> first to reduce conflicts.</li>
+        <li>Use branches + PRs for team changes to keep the main branch stable.</li>
+        <li>Avoid changing system configs unless you know exactly what the change does.</li>
+        <li>Use <code>sudo</code> only for installs, service restarts, and approved admin tasks.</li>
+        <li>Test your changes after editing (refresh the site, validate layout, check links).</li>
+        <li>Log out when finished: <code>exit</code>.</li>
+      </ul>
+
+      <div class="note">
+        <strong>Suggestion:</strong> Once we finalize the deployment workflow, prefer making changes in a DEV environment and promoting to PROD rather than editing directly on PROD.
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">
+    <div>Last updated: <span class="muted">VPS Team Guide</span> • Main Channel Brewing (Internal)</div>
+  </div>
+</body>
+</html>
