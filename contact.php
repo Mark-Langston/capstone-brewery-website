@@ -1,7 +1,8 @@
 <?php include 'header.php'; ?>
 
-<h2>Placeholder</h2>
+<h2>Contact</h2>
 
 <p>Placeholder for contact page.</p>
 
 <?php include 'footer.php'; ?>
+
