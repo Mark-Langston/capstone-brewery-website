@@ -300,6 +300,7 @@ Because the architecture follows standard web development practices, the system 
 
 ---
 Demo site temporarily available at https://mainchannelbrewing.dev
+---
 End of Document
 
 
