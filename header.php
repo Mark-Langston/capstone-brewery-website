@@ -12,7 +12,7 @@
 
 <div class="logo-container">
 <a href="index.php">
-<img src="/assets/images/logos/logo.png" alt="Main Channel Brewing Company Logo" class="site-logo">
+<img src="assets/images/logos/logo-white.png" alt="Main Channel Brewing Company Logo" class="site-logo">
 </a>
 </div>
 
