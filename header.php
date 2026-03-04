@@ -9,7 +9,12 @@
 <body>
 
 <header>
-<h1>Main Channel Brewing</h1>
+
+<div class="logo-container">
+<a href="index.php">
+<img src="assets/images/logos/logo.png" alt="Main Channel Brewing Company Logo" class="site-logo">
+</a>
+</div>
 
 <nav>
 <a href="index.php">Home</a>
