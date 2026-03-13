@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS inventory (
+    inventory_id INT AUTO_INCREMENT PRIMARY KEY
+);
