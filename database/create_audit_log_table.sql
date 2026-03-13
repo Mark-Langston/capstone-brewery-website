@@ -1,0 +1,3 @@
+CREATE TABLE IF NOT EXISTS audit_log (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY
+);
