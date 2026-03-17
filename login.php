@@ -30,7 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Please enter a valid email address.';
     } else {
-        $stmt = $pdo->prepare('SELECT user_id, email, password_hash, first_name, last_name, role FROM users WHERE email = :email LIMIT 1');
+        $stmt = $pdo->prepare('
+            SELECT user_id, email, password_hash, first_name, last_name, role
+            FROM users
+            WHERE email = :email
+            LIMIT 1
+        ');
         $stmt->execute(['email' => $email]);
         $user = $stmt->fetch();
 
@@ -42,6 +47,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['first_name'] = $user['first_name'] ?? '';
             $_SESSION['last_name'] = $user['last_name'] ?? '';
             $_SESSION['role'] = $user['role'];
+
+            // Initialize CSRF token for authenticated actions
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+            // Optional: write login event to audit_log
+            try {
+                $auditStmt = $pdo->prepare("
+                    INSERT INTO audit_log (
+                        user_id,
+                        inventory_id,
+                        action_type,
+                        field_changed,
+                        old_value,
+                        new_value,
+                        change_timestamp
+                    ) VALUES (
+                        :user_id,
+                        :inventory_id,
+                        :action_type,
+                        :field_changed,
+                        :old_value,
+                        :new_value,
+                        NOW()
+                    )
+                ");
+
+                $auditStmt->bindValue(':user_id', (int)$user['user_id'], PDO::PARAM_INT);
+                $auditStmt->bindValue(':inventory_id', null, PDO::PARAM_NULL);
+                $auditStmt->bindValue(':action_type', 'LOGIN', PDO::PARAM_STR);
+                $auditStmt->bindValue(':field_changed', 'users', PDO::PARAM_STR);
+                $auditStmt->bindValue(':old_value', null, PDO::PARAM_NULL);
+                $auditStmt->bindValue(':new_value', 'Successful login for ' . $user['email'], PDO::PARAM_STR);
+                $auditStmt->execute();
+            } catch (PDOException $e) {
+                // Do not block login if audit logging fails
+            }
 
             header('Location: AdminDashboard.php');
             exit;
@@ -58,17 +99,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
     <style>
-        body { font-family: Arial; background: #f4f4f4; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+        }
+
         .login-container {
             max-width: 400px;
             margin: 80px auto;
             background: white;
             padding: 25px;
             border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         }
-        input { width: 100%; padding: 10px; margin-bottom: 10px; }
-        button { width: 100%; padding: 10px; }
-        .error { color: red; margin-bottom: 10px; }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
