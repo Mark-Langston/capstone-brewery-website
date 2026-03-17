@@ -1,12 +1,18 @@
-ALTER TABLE audit_log
-    ADD COLUMN user_id INT NOT NULL,
-    ADD COLUMN inventory_id INT NULL,
-    ADD COLUMN action_type VARCHAR(50) NOT NULL,
-    ADD COLUMN field_changed VARCHAR(100) NULL,
-    ADD COLUMN old_value TEXT NULL,
-    ADD COLUMN new_value TEXT NULL,
-    ADD COLUMN change_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ADD CONSTRAINT fk_audit_log_user
-        FOREIGN KEY (user_id) REFERENCES users(user_id),
-    ADD CONSTRAINT fk_audit_log_inventory
-        FOREIGN KEY (inventory_id) REFERENCES inventory(inventory_id);
+DROP TABLE IF EXISTS audit_log;
+
+CREATE TABLE audit_log (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    entity_type VARCHAR(50) NOT NULL,
+    entity_id INT NULL,
+    action_type VARCHAR(50) NOT NULL,
+    field_changed VARCHAR(100) NULL,
+    old_value TEXT NULL,
+    new_value TEXT NULL,
+    change_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_audit_log_user
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
