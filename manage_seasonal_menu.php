@@ -214,7 +214,7 @@ function processUploadedImage(array $file, ?string $existingImagePath = null): a
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'create_seasonal_special') {
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
         setFlash('Invalid request token.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 
@@ -223,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
 
     if ($headerText === '' || $description === '') {
         setFlash('Header text and description are required.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 
@@ -233,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
         [$success, $newImagePath, $error] = processUploadedImage($_FILES['image_path'], null);
         if (!$success) {
             setFlash($error ?? 'Image upload failed.', 'error');
-            header('Location: manage_seasonl_menu.php');
+            header('Location: manage_seasonal_menu.php');
             exit;
         }
         $imagePath = $newImagePath;
@@ -269,11 +269,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
         writeAuditLog($pdo, (int)$_SESSION['user_id'], 'seasonal_special', $seasonalSpecialId, 'CREATE', 'image_path', null, $imagePath);
 
         setFlash('Seasonal special created successfully.', 'success');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     } catch (PDOException $e) {
         setFlash('Error creating seasonal special.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 }
@@ -286,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'update_seasonal_special') {
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
         setFlash('Invalid request token.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 
@@ -297,13 +297,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
 
     if ($seasonalSpecialId <= 0) {
         setFlash('Invalid seasonal special.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 
     if ($headerText === '' || $description === '') {
         setFlash('Header text and description are required.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 
@@ -319,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
 
         if (!$existing) {
             setFlash('Seasonal special not found.', 'error');
-            header('Location: manage_seasonl_menu.php');
+            header('Location: manage_seasonal_menu.php');
             exit;
         }
 
@@ -337,7 +337,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
             [$success, $processedPath, $error] = processUploadedImage($_FILES['image_path'], $existing['image_path'] ?: null);
             if (!$success) {
                 setFlash($error ?? 'Image upload failed.', 'error');
-                header('Location: manage_seasonl_menu.php');
+                header('Location: manage_seasonal_menu.php');
                 exit;
             }
             $newImagePath = $processedPath;
@@ -392,11 +392,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
             setFlash('No changes were detected.', 'success');
         }
 
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     } catch (PDOException $e) {
         setFlash('Error updating seasonal special.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 }
@@ -409,7 +409,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'updat
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete_seasonal_special') {
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
         setFlash('Invalid request token.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 
@@ -417,7 +417,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
 
     if ($seasonalSpecialId <= 0) {
         setFlash('Invalid seasonal special.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 
@@ -433,7 +433,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
 
         if (!$existing) {
             setFlash('Seasonal special not found.', 'error');
-            header('Location: manage_seasonl_menu.php');
+            header('Location: manage_seasonal_menu.php');
             exit;
         }
 
@@ -452,11 +452,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         writeAuditLog($pdo, (int)$_SESSION['user_id'], 'seasonal_special', $seasonalSpecialId, 'DELETE', 'image_path', $existing['image_path'] ?: null, null);
 
         setFlash('Seasonal special deleted successfully.', 'success');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     } catch (PDOException $e) {
         setFlash('Error deleting seasonal special.', 'error');
-        header('Location: manage_seasonl_menu.php');
+        header('Location: manage_seasonal_menu.php');
         exit;
     }
 }
@@ -691,7 +691,7 @@ $flash = getFlash();
     <div class="section-card">
         <h2>Add New Seasonal Special</h2>
 
-        <form class="seasonal-form" method="POST" action="manage_seasonl_menu.php" enctype="multipart/form-data">
+        <form class="seasonal-form" method="POST" action="manage_seasonal_menu.php" enctype="multipart/form-data">
             <input type="hidden" name="action" value="create_seasonal_special">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
 
@@ -733,7 +733,7 @@ $flash = getFlash();
                             <?php endif; ?>
                         </div>
 
-                        <form class="seasonal-form" method="POST" action="manage_seasonl_menu.php" enctype="multipart/form-data">
+                        <form class="seasonal-form" method="POST" action="manage_seasonal_menu.php" enctype="multipart/form-data">
                             <input type="hidden" name="action" value="update_seasonal_special">
                             <input type="hidden" name="seasonal_special_id" value="<?= (int)$item['seasonal_special_id'] ?>">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
@@ -775,7 +775,7 @@ $flash = getFlash();
                             </div>
                         </form>
 
-                        <form method="POST" action="manage_seasonl_menu.php" onsubmit="return confirm('Are you sure you want to delete this seasonal special?');" style="margin-top: 10px;">
+                        <form method="POST" action="manage_seasonal_menu.php" onsubmit="return confirm('Are you sure you want to delete this seasonal special?');" style="margin-top: 10px;">
                             <input type="hidden" name="action" value="delete_seasonal_special">
                             <input type="hidden" name="seasonal_special_id" value="<?= (int)$item['seasonal_special_id'] ?>">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
