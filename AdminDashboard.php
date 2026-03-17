@@ -44,7 +44,7 @@ $commonLinks = [
         'label' => 'Manage Inventory'
     ],
     [
-        'href' => 'manage_seasonl_menu.php',
+        'href' => 'manage_seasonal_menu.php',
         'label' => 'Manage Seasonal Inventory'
     ],
     [
