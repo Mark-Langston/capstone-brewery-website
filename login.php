@@ -13,7 +13,7 @@ session_set_cookie_params([
 session_start();
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: admin/AdminDashboard.php');
+    header('Location: AdminDashboard.php');
     exit;
 }
 
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['last_name'] = $user['last_name'] ?? '';
             $_SESSION['role'] = $user['role'];
 
-            header('Location: admin/AdminDashboard.php');
+            header('Location: AdminDashboard.php');
             exit;
         } else {
             $error = 'Invalid email or password.';
