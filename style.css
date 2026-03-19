@@ -217,3 +217,227 @@ footer {
         font-size: 18px;
     }
 }
+
+/* existing styles above */
+
+/* ===== Emmy's styles ===== */
+
+/* ------------------------------
+   Main Channel Brewing
+   Stylesheet
+------------------------------ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header */
+
+header {
+    background: #1b1b1b;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 10px;
+}
+
+/* Navigation */
+
+nav {
+    margin-top: 10px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main Content */
+
+main {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+}
+
+/* Footer */
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    background: #1b1b1b;
+    color: #fff;
+}
+
+/* Utility */
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Beer Menu Page */
+
+.beer-menu-page {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.beer-menu-intro {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.beer-menu-intro h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.beer-menu-intro p {
+    color: #666;
+    font-size: 16px;
+}
+
+.beer-menu-empty {
+    text-align: center;
+    padding: 40px 20px;
+    background: #fff;
+    border-radius: 5px;
+}
+
+.beer-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.beer-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.beer-card-image {
+    width: 100%;
+    height: 240px;
+    background: #e9e9e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.beer-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.beer-card-no-image {
+    color: #777;
+    font-size: 14px;
+}
+
+.beer-card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.beer-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 8px;
+}
+
+.beer-card-header h3 {
+    font-size: 22px;
+    line-height: 1.3;
+}
+
+.beer-price {
+    font-size: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.beer-abv {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+.beer-description {
+    color: #555;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* Responsive */
+
+@media (max-width: 800px) {
+    .beer-menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .beer-card-image {
+        height: 220px;
+    }
+}
+
+@media (max-width: 600px) {
+    nav a {
+        display: inline-block;
+        margin: 8px 10px;
+    }
+
+    main,
+    .beer-menu-page,
+    .container {
+        padding: 15px;
+    }
+
+    .beer-menu-intro h2 {
+        font-size: 28px;
+    }
+
+    .beer-card-header {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .beer-price {
+        font-size: 18px;
+    }
+}
