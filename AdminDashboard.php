@@ -50,6 +50,10 @@ $commonLinks = [
     [
         'href' => 'manage_map.php',
         'label' => 'Manage Map'
+    ],
+    [
+        'href' => 'manage_merch.php',
+        'label' => 'Manage Merch'
     ]
 ];
 
@@ -112,6 +116,7 @@ if ($role === 'superadmin') {
             color: #fff;
             font-size: 12px;
             vertical-align: middle;
+            text-transform: capitalize;
         }
 
         .links-grid {
