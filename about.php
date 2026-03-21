@@ -12,7 +12,7 @@
 </section>
 
 <section id="beer-menu" aria-labelledby="beer-menu-heading">
-  <div class="beer-ambiance" style="background-image: url('assets/Menu_1.png');" role="img" aria-label="Tap menu board behind the bar"></div>
+  <div class="beer-ambiance" style="background-image: url('assets/images/pages/Menu_1.png');" role="img" aria-label="Tap menu board behind the bar"></div>
   <div class="container">
     <div class="section-title">
       <h2 id="beer-menu-heading">Beer Menu</h2>
