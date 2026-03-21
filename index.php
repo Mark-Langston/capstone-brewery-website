@@ -1,4 +1,16 @@
-<?php include 'header.php'; ?>
+<?php 
+declare(strict_types=1);
+
+require_once __DIR__ . '/db.php';
+
+$stmt = $pdo->query("
+    SELECT inventory_id, item_name, abv, price, description, image_path
+    FROM inventory
+    ORDER BY created_at DESC, inventory_id DESC
+");
+$inventoryItems = $stmt->fetchAll();
+
+include 'header.php'; ?>
 
 <a href="#hero" class="skip-link">Skip to main content</a>
 
@@ -18,94 +30,37 @@
       <h2 id="beer-menu-heading">Beer Menu</h2>
       <p class="section-subtitle">Brewing is our life, beer is our water—so don't waste time drinking other things.</p>
     </div>
-    <div class="beer-grid">
-      <article class="beer-card">
-        <h3>Hydrant City Lager</h3>
-        <p class="beer-style">American Lager</p>
-        <p class="beer-abv">4.5% ABV</p>
-        <p class="beer-desc">Smooth, clean, and crisp with low to medium hop bitterness and a subtle hop aroma. Perfect for any occasion.</p>
-        <p class="beer-price">$6.00 / 16oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>Camino Bravo</h3>
-        <p class="beer-style">Mexican-Style Lager</p>
-        <p class="beer-abv">4.8% ABV</p>
-        <p class="beer-desc">Well-balanced, refreshing, light and crisp with subtle malt flavors and a gentle hop presence.</p>
-        <p class="beer-price">$6.00 / 16oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>Kölsch</h3>
-        <p class="beer-style">Kölsch</p>
-        <p class="beer-abv">5% ABV</p>
-        <p class="beer-desc">Pristine and crisp ale with a subtle interplay of hop and malt flavors. Exceptionally drinkable.</p>
-        <p class="beer-price">$5.00 / 16oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>American Wheat</h3>
-        <p class="beer-style">American Wheat</p>
-        <p class="beer-abv">5.5% ABV</p>
-        <p class="beer-desc">Moderately bready flavor with a well-rounded balance and hint of sweetness. Easy-drinker.</p>
-        <p class="beer-price">$5.00 / 16oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>Irish Dry Stout</h3>
-        <p class="beer-style">Dry Stout</p>
-        <p class="beer-abv">4.5% ABV</p>
-        <p class="beer-desc">Robust black beer with roasted barley, dry-roasted character, and a crisply defined finish.</p>
-        <p class="beer-price">$6.00 / 16oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>Hard Seltzer</h3>
-        <p class="beer-style">Hard Seltzer</p>
-        <p class="beer-abv">5% ABV</p>
-        <p class="beer-desc">Crisp base with your choice of fruit purees: Pineapple, Blood Orange, Blueberry Lemonade, Key Lime Prickly Pear, Peach.</p>
-        <p class="beer-price">$5.00</p>
-      </article>
-      <article class="beer-card">
-        <h3>Amber Ale</h3>
-        <p class="beer-style">Amber Ale</p>
-        <p class="beer-abv">5.8% ABV</p>
-        <p class="beer-desc">Malt-forward with caramel, toffee, and subtle coffee undertones. Bold and complex.</p>
-        <p class="beer-price">$5.00 / 16oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>New England IPA</h3>
-        <p class="beer-style">NEIPA</p>
-        <p class="beer-abv">7% ABV</p>
-        <p class="beer-desc">Tropical fruit flavors, heavily dry-hopped, hazy appearance. Smooth and full-bodied with less bitterness.</p>
-        <p class="beer-price">$6.00 / 12oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>Jitney Juice</h3>
-        <p class="beer-style">Hazy Imperial IPA</p>
-        <p class="beer-abv">8.7% ABV</p>
-        <p class="beer-desc">Triple dry hopped with orange, grapefruit, and pineapple. Creamy texture, bold and refreshing.</p>
-        <p class="beer-price">$7.00 / 12oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>Dunkelweisse</h3>
-        <p class="beer-style">Dark German Wheat</p>
-        <p class="beer-abv">5.8% ABV</p>
-        <p class="beer-desc">Rich malty base with clove and banana notes. Traditional yet distinctive.</p>
-        <p class="beer-price">$5.00 / 16oz</p>
-      </article>
-      <article class="beer-card">
-        <h3>India Pale Ale</h3>
-        <p class="beer-style">West Coast IPA</p>
-        <p class="beer-abv">6% ABV</p>
-        <p class="beer-desc">Bold, hoppy with pine, resin, grapefruit and citrus. Floral and fruity aroma.</p>
-        <p class="beer-price">$5.00 / 16oz</p>
-      </article>
-      <article class="beer-card beer-card--seasonal">
-        <h3>Celtic Crossing</h3>
-        <p class="beer-style">Irish Red Ale (Limited)</p>
-        <p class="beer-abv">Seasonal</p>
-        <p class="beer-desc">Caramel richness and roasted barley. Rich and deep as the waters of the Emerald Isle.</p>
-        <p class="beer-price">Ask for availability</p>
-      </article>
-    </div>
+
+    <?php if (empty($inventoryItems)): ?>
+      <section class="beer-menu-empty">
+        <p>No beer menu items are available right now. Please check back soon.</p>
+      </section>
+    <?php else: ?>
+      <div class="beer-grid">
+        <?php foreach ($inventoryItems as $item): ?>
+          <article class="beer-card">
+            <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string) $item['image_path'], '/'))): ?>
+              <div class="beer-card-image">
+                <img
+                  src="<?= htmlspecialchars('/' . ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
+                  alt="<?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?>"
+                >
+              </div>
+            <?php endif; ?>
+
+            <h3><?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?></h3>
+            <p class="beer-abv">ABV: <?= htmlspecialchars((string) $item['abv'], ENT_QUOTES, 'UTF-8') ?>%</p>
+            <p class="beer-desc">
+              <?= nl2br(htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8')) ?>
+            </p>
+            <p class="beer-price">$<?= htmlspecialchars((string) $item['price'], ENT_QUOTES, 'UTF-8') ?></p>
+          </article>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
   </div>
 </section>
+
 
 <section id="merch" aria-labelledby="merch-heading">
   <div class="container">
