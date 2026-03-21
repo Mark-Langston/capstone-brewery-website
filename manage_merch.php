@@ -145,7 +145,9 @@ img{width:100px;height:100px;object-fit:cover}
 </head>
 <body>
 <div class="container">
-<a class="btn" href="AdminDashboard.php">Back</a>
+        <div class="top-bar">
+            <a class="btn btn-primary" href="AdminDashboard.php">← Admin Dashboard</a>
+        </div>
 
 <?php if($flash): ?><div class="card"><?=htmlspecialchars($flash['message'])?></div><?php endif;?>
 
