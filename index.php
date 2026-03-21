@@ -145,6 +145,7 @@ include 'header.php';
     <div class="section-title">
       <h2 id="about-heading">Behind the Brews at Main Channel</h2>
     </div>
+
     <div class="brews-pillars">
       <div class="brews-pillar">
         <h4>Best ingredients</h4>
@@ -163,6 +164,7 @@ include 'header.php';
         <p>Every batch has a tale, deeply rooted in inspired beginnings and carefully crafted until the final pour.</p>
       </div>
     </div>
+
     <div class="about-block about-block--split">
       <div class="about-block-image" style="background-image: url('assets/Bright_Tanks_1.png');"></div>
       <div class="about-block-text">
@@ -171,31 +173,74 @@ include 'header.php';
         <a href="#events" class="about-cta">Visit Our Taprooms</a>
       </div>
     </div>
+
     <blockquote class="brewmaster">
       <p>I believe in beer that tells a story—a story of dedication and community. Each batch is a testament to our commitment to excellence and innovation in brewing. It's not just about the brew; it's about creating moments that bring people together.</p>
-      <cite>— Tyre Jordan, Brew Master</cite>
+      <cite>— Tyke Jordan, Brew Master</cite>
     </blockquote>
+
     <div class="about-block about-block--split about-block--reverse">
       <div class="about-block-image" style="background-image: url('assets/capstonephoto6-4af5d255-0ac4-4d3b-ab76-d91984a51ce2.png');"></div>
+
       <div class="about-block-text">
         <h3>Meet the Crew</h3>
         <p>Discover the passionate team behind our exceptional craft beers.</p>
+
         <div class="crew-grid">
+              <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Clay Smith</h4>
+            <p class="crew-card-role">Founder</p>
+          </div>
+            
           <div class="crew-card">
             <div class="crew-card-image" aria-hidden="true"></div>
             <h4>Jeff Gossage</h4>
             <p class="crew-card-role">General Manager</p>
           </div>
+
           <div class="crew-card">
             <div class="crew-card-image" aria-hidden="true"></div>
             <h4>Prentice Satterfield</h4>
             <p class="crew-card-role">Sales Manager</p>
           </div>
+
           <div class="crew-card">
             <div class="crew-card-image" aria-hidden="true"></div>
             <h4>Brian Satterfield</h4>
             <p class="crew-card-role">Cellar Operator</p>
           </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Tyke Jordan</h4>
+            <p class="crew-card-role">Brew Master</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Drew Martin</h4>
+            <p class="crew-card-role">Guntersville Taproom Manager</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Tom Koury</h4>
+            <p class="crew-card-role">Albertville Taproom Manager</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Aaliyah Bird</h4>
+            <p class="crew-card-role">Albertville Taproom Assistant Manager</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Leigh Ellen Styke</h4>
+            <p class="crew-card-role">Event Coordinator/Bartender</p>
+          </div>
+
         </div>
       </div>
     </div>
