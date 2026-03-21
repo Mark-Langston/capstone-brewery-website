@@ -1,13 +1,13 @@
 
-Main Channel Brewing Website – Deployment & Infrastructure Documentation
+<h1>Main Channel Brewing Website – Deployment & Infrastructure Documentation</h1>
 
 OVERVIEW
 This document provides step-by-step instructions to fully recreate the Main Channel Brewing website environment on a new VPS. It is designed for non-expert users and walks through every layer of setup including server provisioning, web stack installation, database configuration, application deployment, and security.
-<p algin="center"><h2>
+<p algin="center"><h1>
 ==================================================<br>
 SECTION 1 – VPS SETUP<br>
 ==================================================<br>
-</h2></p>
+</h1></p>
 1. Purchase a VPS (Hostinger recommended)
 2. Select Ubuntu OS
 3. Obtain server IP address
