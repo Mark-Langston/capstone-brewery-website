@@ -59,25 +59,32 @@ $seasonalSpecials = $stmt->fetchAll();
 
         .carousel-shell {
             position: relative;
-            min-height: 520px;
+            overflow: hidden;
+            background: #ffffff;
         }
 
         .seasonal-carousel {
-            position: relative;
             overflow: hidden;
+            background: #ffffff;
+        }
+
+        .seasonal-track {
+            display: flex;
+            transition: transform 0.6s ease;
+            will-change: transform;
+            background: #ffffff;
         }
 
         .seasonal-slide {
-            display: none;
+            min-width: 100%;
+            flex: 0 0 100%;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 50px;
             min-height: 500px;
             padding: 10px 70px 50px;
-        }
-
-        .seasonal-slide.active {
-            display: flex;
+            background: #ffffff;
         }
 
         .seasonal-image-panel {
@@ -86,6 +93,7 @@ $seasonalSpecials = $stmt->fetchAll();
             justify-content: center;
             align-items: center;
             min-height: 360px;
+            background: #ffffff;
         }
 
         .seasonal-image-wrap {
@@ -95,6 +103,7 @@ $seasonalSpecials = $stmt->fetchAll();
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #ffffff;
         }
 
         .seasonal-image-wrap img {
@@ -104,6 +113,9 @@ $seasonalSpecials = $stmt->fetchAll();
             height: auto;
             object-fit: contain;
             display: block;
+            border: none;
+            box-shadow: none;
+            background: transparent;
         }
 
         .seasonal-no-image {
@@ -113,8 +125,7 @@ $seasonalSpecials = $stmt->fetchAll();
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #e6c6bc;
-            background: #faf7f6;
+            background: #ffffff;
             color: #999;
             font-size: 16px;
         }
@@ -123,13 +134,14 @@ $seasonalSpecials = $stmt->fetchAll();
             flex: 0 1 360px;
             display: flex;
             justify-content: center;
+            background: #ffffff;
         }
 
         .seasonal-content-box {
             width: 100%;
             max-width: 320px;
             border: 1px solid #e48f79;
-            background: rgba(255, 255, 255, 0.6);
+            background: #ffffff;
             padding: 22px 18px;
         }
 
@@ -320,29 +332,31 @@ $seasonalSpecials = $stmt->fetchAll();
             <button class="carousel-arrow next" type="button" aria-label="Next seasonal special">&#8250;</button>
 
             <div class="seasonal-carousel" id="seasonalCarousel">
-                <?php foreach ($seasonalSpecials as $index => $item): ?>
-                    <div class="seasonal-slide<?= $index === 0 ? ' active' : '' ?>">
-                        <div class="seasonal-image-panel">
-                            <div class="seasonal-image-wrap">
-                                <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string) $item['image_path'], '/'))): ?>
-                                    <img
-                                        src="/<?= htmlspecialchars(ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
-                                        alt="<?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?>"
-                                    >
-                                <?php else: ?>
-                                    <div class="seasonal-no-image">No Image Available</div>
-                                <?php endif; ?>
+                <div class="seasonal-track" id="seasonalTrack">
+                    <?php foreach ($seasonalSpecials as $item): ?>
+                        <div class="seasonal-slide">
+                            <div class="seasonal-image-panel">
+                                <div class="seasonal-image-wrap">
+                                    <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string) $item['image_path'], '/'))): ?>
+                                        <img
+                                            src="/<?= htmlspecialchars(ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
+                                            alt="<?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?>"
+                                        >
+                                    <?php else: ?>
+                                        <div class="seasonal-no-image">No Image Available</div>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="seasonal-content-panel">
-                            <div class="seasonal-content-box">
-                                <h2><?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?></h2>
-                                <p><?= nl2br(htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8')) ?></p>
+                            <div class="seasonal-content-panel">
+                                <div class="seasonal-content-box">
+                                    <h2><?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?></h2>
+                                    <p><?= nl2br(htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8')) ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
 
             <div class="carousel-dots" id="carouselDots">
@@ -367,19 +381,22 @@ $seasonalSpecials = $stmt->fetchAll();
         const prevBtn = document.querySelector('.carousel-arrow.prev');
         const nextBtn = document.querySelector('.carousel-arrow.next');
         const carousel = document.getElementById('seasonalCarousel');
+        const track = document.getElementById('seasonalTrack');
 
         let currentIndex = 0;
         let intervalId = null;
-        const delay = 4000;
+        const delay = 5000;
+
+        function updateDots() {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
 
         function showSlide(index) {
-            slides[currentIndex].classList.remove('active');
-            dots[currentIndex].classList.remove('active');
-
             currentIndex = (index + slides.length) % slides.length;
-
-            slides[currentIndex].classList.add('active');
-            dots[currentIndex].classList.add('active');
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            updateDots();
         }
 
         function nextSlide() {
@@ -427,10 +444,12 @@ $seasonalSpecials = $stmt->fetchAll();
         document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
                 stopAutoRotate();
-            } else {
+            } else if (slides.length > 1) {
                 startAutoRotate();
             }
         });
+
+        showSlide(0);
 
         if (slides.length > 1) {
             startAutoRotate();
