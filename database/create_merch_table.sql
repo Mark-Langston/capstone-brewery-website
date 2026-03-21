@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS merch;
+
+CREATE TABLE merch (
+    merch_id INT AUTO_INCREMENT PRIMARY KEY
+);
