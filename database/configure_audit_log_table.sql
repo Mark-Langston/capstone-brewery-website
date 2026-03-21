@@ -16,3 +16,12 @@ CREATE TABLE audit_log (
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 );
+
+CREATE INDEX idx_audit_log_user_id
+    ON audit_log(user_id);
+
+CREATE INDEX idx_audit_log_entity_type_entity_id
+    ON audit_log(entity_type, entity_id);
+
+CREATE INDEX idx_audit_log_change_timestamp
+    ON audit_log(change_timestamp);
