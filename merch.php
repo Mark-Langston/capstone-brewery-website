@@ -1,5 +1,3 @@
-<?php include 'header.php'; ?>
-
 <?php
 declare(strict_types=1);
 
@@ -476,7 +474,4 @@ $merchItems = $stmt->fetchAll();
 
 </body>
 </html>
-
-
-<?php include 'footer.php'; ?>
 
