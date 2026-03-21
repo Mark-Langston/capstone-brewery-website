@@ -9,11 +9,19 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: #f4f4f4;
     color: #333;
     line-height: 1.6;
+}
+
+img {
+    max-width: 100%;
 }
 
 /* Header */
@@ -74,56 +82,146 @@ footer {
     padding: 20px;
 }
 
-/* Beer Menu Page */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
 
-.beer-menu-page {
-    max-width: 1100px;
-    margin: 30px auto;
+.skip-link:focus {
+    left: 20px;
+    top: 20px;
+    width: auto;
+    height: auto;
+    padding: 10px 14px;
+    background: #fff;
+    color: #111;
+    z-index: 1000;
+    border-radius: 6px;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.section-title h2 {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.section-subtitle {
+    color: #666;
+    font-size: 16px;
+}
+
+/* Hero */
+
+.hero {
+    position: relative;
+    min-height: 540px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: #fff;
+    text-align: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
     padding: 20px;
 }
 
-.beer-menu-intro {
-    text-align: center;
-    margin-bottom: 30px;
+.hero h1 {
+    font-size: 48px;
+    line-height: 1.15;
+    margin-bottom: 14px;
 }
 
-.beer-menu-intro h2 {
-    font-size: 32px;
-    margin-bottom: 10px;
+.hero-tagline {
+    font-size: 18px;
+    margin-bottom: 24px;
 }
 
-.beer-menu-intro p {
-    color: #666;
-    font-size: 16px;
+.hero-cta,
+.about-cta {
+    display: inline-block;
+    padding: 12px 22px;
+    background: #d85429;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.hero-cta:hover,
+.about-cta:hover {
+    background: #b8411e;
+}
+
+/* Beer Menu */
+
+.homepage-beer-menu {
+    padding: 70px 0 90px;
+    background: #f4f4f4;
+}
+
+.beer-ambiance,
+.events-ambiance {
+    width: 100%;
+    min-height: 240px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.beer-menu-container {
+    max-width: 1500px;
 }
 
 .beer-menu-empty {
     text-align: center;
     padding: 40px 20px;
     background: #fff;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
-.beer-menu-grid {
+.beer-menu-grid--homepage {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
 }
 
 .beer-card {
     background: #fff;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-width: 0;
 }
 
 .beer-card-image {
     width: 100%;
-    height: 240px;
-    background: #e9e9e9;
+    height: 180px;
+    background: #ececec;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -135,15 +233,18 @@ footer {
     height: 100%;
     object-fit: contain;
     display: block;
+    background: #fff;
 }
 
 .beer-card-no-image {
     color: #777;
     font-size: 14px;
+    padding: 20px;
+    text-align: center;
 }
 
 .beer-card-content {
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -153,266 +254,435 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 15px;
+    gap: 10px;
     margin-bottom: 8px;
 }
 
 .beer-card-header h3 {
-    font-size: 22px;
+    font-size: 18px;
     line-height: 1.3;
+    margin: 0;
 }
 
 .beer-price {
-    font-size: 20px;
+    font-size: 17px;
     font-weight: bold;
     white-space: nowrap;
+    color: #111;
 }
 
 .beer-abv {
     font-weight: bold;
     color: #555;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    font-size: 14px;
 }
 
 .beer-description {
     color: #555;
-    font-size: 15px;
-    line-height: 1.7;
-}
-
-/* Responsive */
-
-@media (max-width: 800px) {
-    .beer-menu-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .beer-card-image {
-        height: 220px;
-    }
-}
-
-@media (max-width: 600px) {
-    nav a {
-        display: inline-block;
-        margin: 8px 10px;
-    }
-
-    main,
-    .beer-menu-page,
-    .container {
-        padding: 15px;
-    }
-
-    .beer-menu-intro h2 {
-        font-size: 28px;
-    }
-
-    .beer-card-header {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .beer-price {
-        font-size: 18px;
-    }
-}
-
-/* existing styles above */
-
-/* ===== Emmy's styles ===== */
-
-/* ------------------------------
-   Main Channel Brewing
-   Stylesheet
------------------------------- */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    font-size: 14px;
     line-height: 1.6;
 }
 
-/* Header */
+/* Merch */
 
-header {
-    background: #1b1b1b;
-    color: #fff;
-    padding: 20px 0;
-    text-align: center;
+.homepage-merch {
+    padding: 70px 0 90px;
+    background: #f4f4f4;
 }
 
-header h1 {
-    margin-bottom: 10px;
+.homepage-merch .container {
+    max-width: 1400px;
 }
 
-/* Navigation */
-
-nav {
-    margin-top: 10px;
-}
-
-nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 15px;
-    font-weight: bold;
-}
-
-nav a:hover {
-    text-decoration: underline;
-}
-
-/* Main Content */
-
-main {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 5px;
-}
-
-/* Footer */
-
-footer {
-    text-align: center;
-    padding: 20px;
-    margin-top: 30px;
-    background: #1b1b1b;
-    color: #fff;
-}
-
-/* Utility */
-
-.container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 20px;
-}
-
-/* Beer Menu Page */
-
-.beer-menu-page {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 20px;
-}
-
-.beer-menu-intro {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.beer-menu-intro h2 {
-    font-size: 32px;
-    margin-bottom: 10px;
-}
-
-.beer-menu-intro p {
-    color: #666;
-    font-size: 16px;
-}
-
-.beer-menu-empty {
-    text-align: center;
-    padding: 40px 20px;
-    background: #fff;
-    border-radius: 5px;
-}
-
-.beer-menu-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
-}
-
-.beer-card {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+.carousel-shell {
+    position: relative;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 10px 0 20px;
 }
 
-.beer-card-image {
-    width: 100%;
-    height: 240px;
-    background: #e9e9e9;
+.merch-carousel {
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.merch-track {
+    display: flex;
+    transition: transform 0.6s ease;
+    will-change: transform;
+    background: #ffffff;
+}
+
+.merch-slide {
+    min-width: 100%;
+    flex: 0 0 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    gap: 50px;
+    min-height: 500px;
+    padding: 10px 70px 50px;
+    background: #ffffff;
 }
 
-.beer-card-image img {
+.merch-image-panel {
+    flex: 1 1 52%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 360px;
+    background: #ffffff;
+}
+
+.merch-image-wrap {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 560px;
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+}
+
+.merch-image-wrap img {
+    max-width: 100%;
+    max-height: 420px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     display: block;
+    border: none;
+    box-shadow: none;
+    background: transparent;
 }
 
-.beer-card-no-image {
-    color: #777;
-    font-size: 14px;
-}
-
-.beer-card-content {
-    padding: 20px;
+.merch-no-image {
+    width: 100%;
+    max-width: 420px;
+    min-height: 280px;
     display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    color: #999;
+    font-size: 16px;
+    text-align: center;
 }
 
-.beer-card-header {
+.merch-content-panel {
+    flex: 0 1 360px;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 15px;
-    margin-bottom: 8px;
+    justify-content: center;
+    background: #ffffff;
 }
 
-.beer-card-header h3 {
+.merch-content-box {
+    width: 100%;
+    max-width: 320px;
+    border: 1px solid #e48f79;
+    background: #ffffff;
+    padding: 22px 18px;
+    border-radius: 8px;
+}
+
+.merch-content-box h3 {
+    margin: 0 0 14px;
     font-size: 22px;
-    line-height: 1.3;
+    line-height: 1.35;
+    font-weight: 400;
+    font-family: Georgia, "Times New Roman", serif;
 }
 
-.beer-price {
-    font-size: 20px;
+.merch-price {
+    margin: 0 0 14px;
+    color: #d85429;
+    font-size: 22px;
     font-weight: bold;
-    white-space: nowrap;
 }
 
-.beer-abv {
+.merch-copy {
+    margin: 0;
+    line-height: 1.85;
+    font-size: 15px;
+    color: #333;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border: none;
+    background: transparent;
+    color: #e0562b;
+    font-size: 56px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 5;
+    padding: 0;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.carousel-arrow:hover,
+.carousel-arrow:focus {
+    color: #b8411e;
+    outline: none;
+}
+
+.carousel-arrow.prev {
+    left: 0;
+}
+
+.carousel-arrow.next {
+    right: 0;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: #de8b72;
+    opacity: 0.55;
+    cursor: pointer;
+    padding: 0;
+}
+
+.carousel-dot.active {
+    opacity: 1;
+    background: #d85429;
+}
+
+.merch-empty {
+    text-align: center;
+    background: #fff;
+    border-radius: 10px;
+    padding: 40px 20px;
+}
+
+/* About */
+
+#about,
+#events,
+#contact {
+    padding: 70px 0 90px;
+}
+
+.brews-pillars,
+.crew-grid,
+.locations-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.brews-pillars {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 32px;
+}
+
+.brews-pillar,
+.location-card,
+.crew-card,
+.contact-block,
+.upcoming-events,
+.about-block-text,
+.brewmaster {
+    background: #fff;
+    border-radius: 10px;
+    padding: 24px;
+}
+
+.about-block {
+    margin-bottom: 32px;
+}
+
+.about-block--split {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.about-block--reverse {
+    grid-template-columns: 1fr 1.1fr;
+}
+
+.about-block--reverse .about-block-image {
+    order: 2;
+}
+
+.about-block--reverse .about-block-text {
+    order: 1;
+}
+
+.about-block-image {
+    min-height: 320px;
+    border-radius: 10px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.about-block-text h3,
+.upcoming-events h3,
+.location-card h3,
+.contact-block h3,
+.brews-pillar h4,
+.crew-card h4 {
+    margin-bottom: 10px;
+}
+
+.brewmaster {
+    margin-bottom: 32px;
+    font-style: italic;
+}
+
+.brewmaster cite {
+    display: block;
+    margin-top: 12px;
+    font-style: normal;
     font-weight: bold;
-    color: #555;
+}
+
+.crew-grid,
+.locations-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.crew-card-image {
+    width: 100%;
+    height: 120px;
+    background: #ececec;
+    border-radius: 8px;
     margin-bottom: 12px;
 }
 
-.beer-description {
-    color: #555;
-    font-size: 15px;
-    line-height: 1.7;
+.crew-card-role {
+    color: #666;
+}
+
+.location-card address {
+    font-style: normal;
+    margin: 14px 0;
+}
+
+.location-card a,
+.contact-block a {
+    color: #b8411e;
+}
+
+.events-list {
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+.events-list li + li {
+    margin-top: 8px;
 }
 
 /* Responsive */
 
-@media (max-width: 800px) {
-    .beer-menu-grid {
+@media (max-width: 1400px) {
+    .beer-menu-grid--homepage {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .beer-menu-grid--homepage,
+    .brews-pillars,
+    .crew-grid,
+    .locations-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 980px) {
+    .merch-slide {
+        gap: 30px;
+        padding: 10px 45px 40px;
+    }
+
+    .merch-content-panel {
+        flex-basis: 300px;
+    }
+
+    .about-block--split,
+    .about-block--reverse {
         grid-template-columns: 1fr;
     }
 
-    .beer-card-image {
-        height: 220px;
+    .about-block--reverse .about-block-image,
+    .about-block--reverse .about-block-text {
+        order: initial;
+    }
+}
+
+@media (max-width: 900px) {
+    .beer-menu-grid--homepage,
+    .brews-pillars,
+    .crew-grid,
+    .locations-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 780px) {
+    .homepage-beer-menu,
+    .homepage-merch,
+    #about,
+    #events,
+    #contact {
+        padding: 50px 0 70px;
+    }
+
+    .hero {
+        min-height: 420px;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .merch-slide {
+        flex-direction: column;
+        gap: 22px;
+        padding: 10px 36px 40px;
+        min-height: auto;
+    }
+
+    .merch-image-panel,
+    .merch-content-panel {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
+    .merch-content-box {
+        max-width: 560px;
+    }
+
+    .merch-image-wrap {
+        min-height: 260px;
+    }
+
+    .merch-image-wrap img {
+        max-height: 320px;
+    }
+
+    .carousel-arrow {
+        font-size: 46px;
+        width: 42px;
+        height: 42px;
     }
 }
 
@@ -423,21 +693,58 @@ footer {
     }
 
     main,
-    .beer-menu-page,
     .container {
         padding: 15px;
     }
 
-    .beer-menu-intro h2 {
+    .section-title h2 {
         font-size: 28px;
+    }
+
+    .beer-menu-grid--homepage,
+    .brews-pillars,
+    .crew-grid,
+    .locations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .beer-card-image {
+        height: 220px;
     }
 
     .beer-card-header {
         flex-direction: column;
-        gap: 5px;
+        gap: 6px;
     }
 
     .beer-price {
         font-size: 18px;
+    }
+}
+
+@media (max-width: 520px) {
+    .merch-slide {
+        padding: 0 26px 34px;
+    }
+
+    .merch-content-box {
+        padding: 18px 15px;
+    }
+
+    .merch-content-box h3 {
+        font-size: 18px;
+    }
+
+    .merch-price {
+        font-size: 20px;
+    }
+
+    .merch-copy {
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .carousel-arrow {
+        font-size: 38px;
     }
 }
