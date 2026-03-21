@@ -2,7 +2,7 @@
 
 <a href="#hero" class="skip-link">Skip to main content</a>
 
-<section class="hero" id="hero" style="background-image: url('assets/images/pages/Stage.png');">
+<section class="hero" id="hero" style="background-image: url('assets/images/pages/Stage.jpg');">
   <div class="hero-overlay" aria-hidden="true"></div>
   <div class="hero-content">
     <h1>Crafting Flavors, Celebrating Community.</h1>
