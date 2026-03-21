@@ -3,14 +3,22 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/db.php';
 
-$stmt = $pdo->query("
+$inventoryStmt = $pdo->query("
     SELECT inventory_id, item_name, abv, price, description, image_path
     FROM inventory
     ORDER BY created_at DESC, inventory_id DESC
 ");
-$inventoryItems = $stmt->fetchAll();
+$inventoryItems = $inventoryStmt->fetchAll();
 
-include 'header.php'; ?>
+$merchStmt = $pdo->query("
+    SELECT merch_id, name, price, image_path
+    FROM merch
+    ORDER BY created_at DESC, merch_id DESC
+");
+$merchItems = $merchStmt->fetchAll();
+
+include 'header.php';
+?>
 
 <a href="#hero" class="skip-link">Skip to main content</a>
 
@@ -23,37 +31,45 @@ include 'header.php'; ?>
   </div>
 </section>
 
-<section id="beer-menu" aria-labelledby="beer-menu-heading">
+<section id="beer-menu" class="homepage-beer-menu" aria-labelledby="beer-menu-heading">
   <div class="beer-ambiance" style="background-image: url('assets/images/pages/Menu.jpg');" role="img" aria-label="Tap menu board behind the bar"></div>
-  <div class="container">
+  <div class="container beer-menu-container">
     <div class="section-title">
       <h2 id="beer-menu-heading">Beer Menu</h2>
-      <p class="section-subtitle">Brewing is our life, beer is our water—so don't waste time drinking other things.</p>
+      <p class="section-subtitle">Explore our current selection of beers on tap.</p>
     </div>
 
     <?php if (empty($inventoryItems)): ?>
-      <section class="beer-menu-empty">
+      <div class="beer-menu-empty">
         <p>No beer menu items are available right now. Please check back soon.</p>
-      </section>
+      </div>
     <?php else: ?>
-      <div class="beer-grid">
+      <div class="beer-menu-grid beer-menu-grid--homepage">
         <?php foreach ($inventoryItems as $item): ?>
           <article class="beer-card">
-            <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string) $item['image_path'], '/'))): ?>
-              <div class="beer-card-image">
+            <div class="beer-card-image">
+              <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string) $item['image_path'], '/'))): ?>
                 <img
                   src="<?= htmlspecialchars('/' . ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
                   alt="<?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?>"
                 >
-              </div>
-            <?php endif; ?>
+              <?php else: ?>
+                <div class="beer-card-no-image">No Image</div>
+              <?php endif; ?>
+            </div>
 
-            <h3><?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?></h3>
-            <p class="beer-abv">ABV: <?= htmlspecialchars((string) $item['abv'], ENT_QUOTES, 'UTF-8') ?>%</p>
-            <p class="beer-desc">
-              <?= nl2br(htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8')) ?>
-            </p>
-            <p class="beer-price">$<?= htmlspecialchars((string) $item['price'], ENT_QUOTES, 'UTF-8') ?></p>
+            <div class="beer-card-content">
+              <div class="beer-card-header">
+                <h3><?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?></h3>
+                <span class="beer-price">$<?= htmlspecialchars((string) $item['price'], ENT_QUOTES, 'UTF-8') ?></span>
+              </div>
+
+              <p class="beer-abv">ABV: <?= htmlspecialchars((string) $item['abv'], ENT_QUOTES, 'UTF-8') ?>%</p>
+
+              <p class="beer-description">
+                <?= nl2br(htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8')) ?>
+              </p>
+            </div>
           </article>
         <?php endforeach; ?>
       </div>
@@ -61,63 +77,66 @@ include 'header.php'; ?>
   </div>
 </section>
 
-
-<section id="merch" aria-labelledby="merch-heading">
+<section id="merch" class="homepage-merch" aria-labelledby="merch-heading">
   <div class="container">
     <div class="section-title">
       <h2 id="merch-heading">Merch Store</h2>
-      <p class="section-subtitle">Gear up with Main Channel Brewing apparel and glassware.</p>
+      <p class="section-subtitle">Browse Main Channel Brewing merchandise and featured items.</p>
     </div>
-    <div class="merch-grid">
-      <article class="product-card">
-        <div class="product-card-image" style="background-image: url('assets/Drink_1.png');"></div>
-        <div class="product-card-body">
-          <h3>Main Channel T-Shirt</h3>
-          <p class="product-card-desc">Unisex, multiple colors</p>
-          <p class="product-card-price">$24.00</p>
+
+    <?php if (empty($merchItems)): ?>
+      <div class="merch-empty">
+        <h3>No merch items are available right now.</h3>
+        <p>Please check back again soon.</p>
+      </div>
+    <?php else: ?>
+      <div class="carousel-shell">
+        <button class="carousel-arrow prev" type="button" aria-label="Previous merch item">&#8249;</button>
+        <button class="carousel-arrow next" type="button" aria-label="Next merch item">&#8250;</button>
+
+        <div class="merch-carousel" id="merchCarousel">
+          <div class="merch-track" id="merchTrack">
+            <?php foreach ($merchItems as $item): ?>
+              <div class="merch-slide">
+                <div class="merch-image-panel">
+                  <div class="merch-image-wrap">
+                    <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string) $item['image_path'], '/'))): ?>
+                      <img
+                        src="/<?= htmlspecialchars(ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
+                        alt="<?= htmlspecialchars((string) $item['name'], ENT_QUOTES, 'UTF-8') ?>"
+                      >
+                    <?php else: ?>
+                      <div class="merch-no-image">No Image Available</div>
+                    <?php endif; ?>
+                  </div>
+                </div>
+
+                <div class="merch-content-panel">
+                  <div class="merch-content-box">
+                    <h3><?= htmlspecialchars((string) $item['name'], ENT_QUOTES, 'UTF-8') ?></h3>
+                    <p class="merch-price">$<?= htmlspecialchars(number_format((float) $item['price'], 2), ENT_QUOTES, 'UTF-8') ?></p>
+                    <p class="merch-copy">
+                      Available while supplies last. Check in at Main Channel Brewing for current availability and featured releases.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          </div>
         </div>
-      </article>
-      <article class="product-card">
-        <div class="product-card-image" style="background-color: var(--surface-wood-light);"></div>
-        <div class="product-card-body">
-          <h3>Snapback Cap</h3>
-          <p class="product-card-desc">Embroidered logo</p>
-          <p class="product-card-price">$22.00</p>
+
+        <div class="carousel-dots" id="carouselDots">
+          <?php foreach ($merchItems as $index => $item): ?>
+            <button
+              class="carousel-dot<?= $index === 0 ? ' active' : '' ?>"
+              type="button"
+              aria-label="Go to merch item <?= $index + 1 ?>"
+              data-slide-index="<?= $index ?>"
+            ></button>
+          <?php endforeach; ?>
         </div>
-      </article>
-      <article class="product-card">
-        <div class="product-card-image" style="background-color: var(--surface-wood-light);"></div>
-        <div class="product-card-body">
-          <h3>Pint Glass</h3>
-          <p class="product-card-desc">16oz branded glass</p>
-          <p class="product-card-price">$8.00</p>
-        </div>
-      </article>
-      <article class="product-card">
-        <div class="product-card-image" style="background-color: var(--surface-wood-light);"></div>
-        <div class="product-card-body">
-          <h3>Growler</h3>
-          <p class="product-card-desc">64oz refillable</p>
-          <p class="product-card-price">$15.00</p>
-        </div>
-      </article>
-      <article class="product-card">
-        <div class="product-card-image" style="background-color: var(--surface-wood-light);"></div>
-        <div class="product-card-body">
-          <h3>Hoodie</h3>
-          <p class="product-card-desc">Comfortable crewneck</p>
-          <p class="product-card-price">$42.00</p>
-        </div>
-      </article>
-      <article class="product-card">
-        <div class="product-card-image" style="background-color: var(--surface-wood-light);"></div>
-        <div class="product-card-body">
-          <h3>Coaster Set</h3>
-          <p class="product-card-desc">Set of 4</p>
-          <p class="product-card-price">$12.00</p>
-        </div>
-      </article>
-    </div>
+      </div>
+    <?php endif; ?>
   </div>
 </section>
 
@@ -234,5 +253,93 @@ include 'header.php'; ?>
     </div>
   </div>
 </section>
+
+<?php if (!empty($merchItems)): ?>
+<script>
+(function () {
+    const slides = Array.from(document.querySelectorAll('.merch-slide'));
+    const dots = Array.from(document.querySelectorAll('.carousel-dot'));
+    const prevBtn = document.querySelector('.carousel-arrow.prev');
+    const nextBtn = document.querySelector('.carousel-arrow.next');
+    const carousel = document.getElementById('merchCarousel');
+    const track = document.getElementById('merchTrack');
+
+    if (!slides.length || !track || !carousel || !prevBtn || !nextBtn) {
+        return;
+    }
+
+    let currentIndex = 0;
+    let intervalId = null;
+    const delay = 5000;
+
+    function updateDots() {
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    function showSlide(index) {
+        currentIndex = (index + slides.length) % slides.length;
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        updateDots();
+    }
+
+    function nextSlide() {
+        showSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+        showSlide(currentIndex - 1);
+    }
+
+    function startAutoRotate() {
+        stopAutoRotate();
+        if (slides.length > 1) {
+            intervalId = window.setInterval(nextSlide, delay);
+        }
+    }
+
+    function stopAutoRotate() {
+        if (intervalId !== null) {
+            window.clearInterval(intervalId);
+            intervalId = null;
+        }
+    }
+
+    nextBtn.addEventListener('click', function () {
+        nextSlide();
+        startAutoRotate();
+    });
+
+    prevBtn.addEventListener('click', function () {
+        prevSlide();
+        startAutoRotate();
+    });
+
+    dots.forEach(function (dot, index) {
+        dot.addEventListener('click', function () {
+            showSlide(index);
+            startAutoRotate();
+        });
+    });
+
+    carousel.addEventListener('mouseenter', stopAutoRotate);
+    carousel.addEventListener('mouseleave', startAutoRotate);
+    carousel.addEventListener('touchstart', stopAutoRotate, { passive: true });
+    carousel.addEventListener('touchend', startAutoRotate);
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            stopAutoRotate();
+        } else {
+            startAutoRotate();
+        }
+    });
+
+    showSlide(0);
+    startAutoRotate();
+})();
+</script>
+<?php endif; ?>
 
 <?php include 'footer.php'; ?>
