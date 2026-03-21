@@ -73,7 +73,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
             else{
                 $pdo->prepare("INSERT INTO merch(name,price,image_path,created_at,updated_at) VALUES(?,?,?,NOW(),NOW())")
                     ->execute([$name,$price,$img]);
-                $id=$pdo->lastInsertId();
+                $id = (int) $pdo->lastInsertId();
                 writeAuditLog($pdo,$_SESSION['user_id'],'merch',$id,'CREATE','name',null,$name);
                 writeAuditLog($pdo,$_SESSION['user_id'],'merch',$id,'CREATE','price',null,$price);
                 setFlash('Created','success');
