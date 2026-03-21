@@ -46,17 +46,127 @@ body {
     font-weight: bold;
 }
 
-/* Header */
+/* ==========================
+   FIXED HEADER (MODERN NAV)
+========================== */
 
-header {
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     background: #1b1b1b;
-    color: #fff;
-    text-align: center;
-    padding: 20px 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-header h1 {
-    margin-bottom: 10px;
+/* Inner layout */
+.header-inner {
+    width: min(1400px, calc(100% - 32px));
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px; /* shorter header */
+}
+
+/* Logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.site-logo {
+    height: 42px; /* smaller logo */
+    width: auto;
+    display: block;
+}
+
+/* Navigation */
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.main-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    position: relative;
+}
+
+/* Hover underline effect */
+.main-nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background: #d85429;
+    transition: width 0.25s ease;
+}
+
+.main-nav a:hover::after,
+.main-nav a:focus::after {
+    width: 100%;
+}
+
+/* ==========================
+   FIX OFFSET FOR FIXED HEADER
+========================== */
+
+/* Prevent content being hidden under header */
+main {
+    padding-top: 72px;
+}
+
+/* Optional: smooth anchor scroll offset */
+section {
+    scroll-margin-top: 90px;
+}
+
+/* ==========================
+   MOBILE NAV
+========================== */
+
+@media (max-width: 768px) {
+    .header-inner {
+        height: 64px;
+    }
+
+    .site-logo {
+        height: 36px;
+    }
+
+    .main-nav {
+        gap: 16px;
+    }
+
+    .main-nav a {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .header-inner {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 0;
+        gap: 8px;
+    }
+
+    .main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    main {
+        padding-top: 100px;
+    }
 }
 
 /* Navigation */
