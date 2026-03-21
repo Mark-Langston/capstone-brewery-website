@@ -3,7 +3,7 @@ Main Channel Brewing Website – Deployment & Infrastructure Documentation
 
 OVERVIEW
 This document provides step-by-step instructions to fully recreate the Main Channel Brewing website environment on a new VPS. It is designed for non-expert users and walks through every layer of setup including server provisioning, web stack installation, database configuration, application deployment, and security.
-<p algin="center"><h3></h3>
+<p algin="center"><h3>
 ==================================================<br>
 SECTION 1 – VPS SETUP<br>
 ==================================================<br>
