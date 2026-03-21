@@ -1,306 +1,190 @@
-README.md Content for Main Channel Brewing Deployment
 
-# Main Channel Brewing Website – Deployment & Infrastructure Documentation
+Main Channel Brewing Website – Deployment & Infrastructure Documentation
 
-## Overview
+OVERVIEW
+This document provides step-by-step instructions to fully recreate the Main Channel Brewing website environment on a new VPS. It is designed for non-expert users and walks through every layer of setup including server provisioning, web stack installation, database configuration, application deployment, and security.
 
-This document provides technical instructions for replicating the hosting environment used for the **Main Channel Brewing Website Modernization Project**. Designed and developed for National University 2026 February-April CS480 Computer Science Capstone project, team Ironclad Solutions. The goal is to allow the customer/stakeholder or another development team to reproduce the exact deployment environment used in this project.
+==================================================
+SECTION 1 – VPS SETUP
+==================================================
 
-The website is hosted on a **Hostinger VPS using the lowest-tier plan**, running a **Linux + Nginx + MariaDB + PHP (LNMP) stack** with automated deployment using **GitHub Actions**.
-
-This documentation includes:
-
-- VPS provisioning
-- Server configuration
-- Web server setup
-- PHP installation
-- MariaDB installation
-- GitHub CI/CD deployment configuration
-- Basic project directory structure
-
----
-
-# Hosting Platform
-
-## Primary Hosting Environment
-
-The project is hosted using:
-
-**Provider:** Hostinger  
-**Plan:** Lowest-tier VPS plan  
-**Estimated Specs:**
-
-- 1 vCPU
-- 4 GB RAM
-- ~50 GB SSD storage
-- Ubuntu Linux
-- Public IP address
-
-This configuration provides sufficient performance for a small business website while remaining cost effective.
-
-### Why Hostinger VPS?
-
-Hostinger was selected for:
-
-- Low cost
-- Simple VPS provisioning
-- Reliable uptime
-- SSH access for server management
-- Easy DNS configuration
-- Compatibility with standard Linux web stacks
-
----
-
-# Alternative Hosting Options
-
-Although Hostinger was used for this project, the system architecture is portable and can easily run on other cloud providers.
-
-Examples include:
-
-## Amazon Web Services (AWS)
-
-Equivalent configuration could use:
-
-- **EC2 instance**
-- Ubuntu Server
-- Elastic IP
-- Security Groups for ports 80/443/22
-
-Advantages:
-
-- Highly scalable
-- Enterprise grade infrastructure
-- Integration with other AWS services
-
-Potential trade offs:
-
-- Higher cost
-- More complex configuration
-
----
-
-## Other Compatible Providers
-
-This architecture would also run on:
-
-- DigitalOcean Droplets
-- Linode
-- Google Cloud Compute Engine
-- Microsoft Azure Virtual Machines
-
-Because the stack is standard **Linux + Nginx + MariaDB + PHP**, it remains portable across nearly all VPS providers.
-
----
-
-# System Architecture
-
-The deployed stack uses a traditional **LNMP architecture**.
-
-Browser
-↓
-Nginx Web Server
-↓
-PHP-FPM
-↓
-MariaDB Database
-
-Components:
-
-| Component | Purpose |
-|--------|--------|
-| Linux | Operating system |
-| Nginx | Web server |
-| PHP-FPM | Executes PHP scripts |
-| MariaDB | Database |
-| GitHub Actions | Continuous deployment |
-| Let's Encrypt | SSL certificates |
-
----
-
-# Initial Server Setup
-
-After acquiring the VPS and receiving the IP address, connect using SSH.
-
-Example:
+1. Purchase a VPS (Hostinger recommended)
+2. Select Ubuntu OS
+3. Obtain server IP address
+4. Connect via SSH:
 
 ssh root@YOUR_SERVER_IP
 
-Update the server packages:
+5. Update system:
 
 sudo apt update
 sudo apt upgrade -y
 
----
-
-# Install Nginx Web Server
+==================================================
+SECTION 2 – INSTALL WEB STACK (LNMP)
+==================================================
 
 Install Nginx:
 
 sudo apt install nginx -y
-
-Verify installation:
-
-sudo systemctl status nginx
-
-Enable Nginx at boot:
-
 sudo systemctl enable nginx
+sudo systemctl start nginx
 
-Open required firewall ports:
-
-sudo ufw allow 'Nginx Full'
-
----
-
-# Install PHP and PHP-FPM
-
-Install PHP and required modules:
+Install PHP:
 
 sudo apt install php-fpm php-cli php-mysql php-curl php-xml php-mbstring php-zip -y
 
-Verify PHP installation:
+Verify:
 
 php -v
-
-Confirm PHP-FPM service:
-
 sudo systemctl status php8.3-fpm
 
----
-
-# Website Directory
-
-The site files are stored in:
-
-/var/www/brewery-site
-
-Example structure:
-
-/var/www/brewery-site
-│
-├── index.php
-├── about.php
-├── beermenu.php
-├── merch.php
-├── contact.php
-├── header.php
-├── footer.php
-├── style.css
-│
-├── assets/
-│   └── images/
-│       └── logos/
-│
-└── admin/
-
----
-
-# GitHub Deployment Integration
-
-The server connects to GitHub using **SSH keys**.
-
-Deployment workflow:
-
-Developer pushes code to GitHub
-↓
-GitHub Actions workflow triggers
-↓
-SSH connection to VPS
-↓
-Server executes:
-
-cd /var/www/brewery-site
-git fetch origin
-git reset --hard origin/main
-
-This ensures the VPS always mirrors the latest version of the repository.
-
----
-
-# Install MariaDB Database
-
-Install MariaDB:
+==================================================
+SECTION 3 – INSTALL DATABASE
+==================================================
 
 sudo apt install mariadb-server -y
-
-Start the service:
-
+sudo systemctl enable mariadb
 sudo systemctl start mariadb
 
-Enable at boot:
-
-sudo systemctl enable mariadb
-
-Secure the installation:
+Secure:
 
 sudo mysql_secure_installation
 
-Recommended options:
+==================================================
+SECTION 4 – CREATE DATABASE
+==================================================
 
-- Remove anonymous users
-- Disallow remote root login
-- Remove test database
-- Reload privilege tables
+sudo mysql -u root -p
 
----
+CREATE DATABASE mainchannel_db;
 
-# MariaDB Installation Walkthrough Video
+CREATE USER 'mainchannel_user'@'localhost' IDENTIFIED BY 'STRONG_PASSWORD';
+GRANT ALL PRIVILEGES ON mainchannel_db.* TO 'mainchannel_user'@'localhost';
+FLUSH PRIVILEGES;
 
-The MariaDB installation process is demonstrated in the following video:
+==================================================
+SECTION 5 – DEPLOY APPLICATION
+==================================================
 
-https://www.youtube.com/watch?v=J0a256ZdZko
+cd /var/www
+git clone https://github.com/Mark-Langston/capstone-brewery-site.git brewery-site
 
-For GitHub README embedding, the video can be displayed using:
+sudo chown -R www-data:www-data /var/www/brewery-site
+sudo chmod -R 755 /var/www/brewery-site
 
-[![MariaDB Installation Walkthrough](https://img.youtube.com/vi/J0a256ZdZko/0.jpg)](https://www.youtube.com/watch?v=J0a256ZdZko)
+==================================================
+SECTION 6 – CREATE DB CONNECTION FILE
+==================================================
 
----
+Create file: /var/www/brewery-site/db.php
 
-# SSL Configuration
+Add:
 
-SSL certificates are installed using Let's Encrypt.
+<?php
+$host = 'localhost';
+$db   = 'mainchannel_db';
+$user = 'mainchannel_user';
+$pass = 'YOUR_PASSWORD';
+?>
 
-Install Certbot:
+NOTE: This file must NOT be committed to GitHub.
+
+==================================================
+SECTION 7 – IMPORT DATABASE TABLES
+==================================================
+
+mysql -u mainchannel_user -p mainchannel_db < schema.sql
+
+(or run individual .sql files)
+
+==================================================
+SECTION 8 – FILE UPLOAD PERMISSIONS
+==================================================
+
+mkdir -p /var/www/brewery-site/assets/images/inventory
+mkdir -p /var/www/brewery-site/assets/images/seasonal
+mkdir -p /var/www/brewery-site/assets/images/merch
+mkdir -p /var/www/brewery-site/assets/images/map
+
+sudo chown -R www-data:www-data /var/www/brewery-site/assets
+sudo chmod -R 755 /var/www/brewery-site/assets
+
+==================================================
+SECTION 9 – SSL SETUP
+==================================================
 
 sudo apt install certbot python3-certbot-nginx -y
-
-Generate certificate:
-
 sudo certbot --nginx
 
-Certificates automatically renew using a scheduled system task.
+==================================================
+SECTION 10 – APPLICATION ARCHITECTURE
+==================================================
 
----
+Layers:
 
-# Final Result
+Physical: VPS hardware
+OS: Ubuntu Linux
+Network: HTTP/HTTPS/SSH
+Web Server: Nginx
+App Layer: PHP
+Data Layer: MariaDB
+Security Layer: Sessions, hashing, RBAC
+Frontend: HTML/CSS/JS + Leaflet
 
-After completing these steps the system provides:
+==================================================
+SECTION 11 – AUTHENTICATION
+==================================================
 
-- Secure HTTPS website
-- PHP application support
-- MariaDB database
-- Automated deployment pipeline
-- Modular PHP site structure
+- Passwords stored using password_hash()
+- Verified using password_verify()
+- Sessions used for login persistence
+- Role-based access enforced
+- CSRF tokens protect forms
 
-The result is a lightweight, cost effective, and maintainable hosting environment suitable for a small business website.
+==================================================
+SECTION 12 – AUDIT LOGGING
+==================================================
 
----
+Tracks:
+- CREATE
+- UPDATE
+- DELETE
 
-# Future Expansion
+Entities:
+- users
+- inventory
+- merch
+- seasonal
+- map
 
-The infrastructure allows for future upgrades such as:
+==================================================
+SECTION 13 – DEPLOYMENT FLOW
+==================================================
 
-- Inventory database tables
-- Administrative dashboard
-- Authentication system
-- API integrations
-- Horizontal scaling via load balancers
+GitHub push → GitHub Actions → VPS → git pull → live site
 
-Because the architecture follows standard web development practices, the system remains portable and extensible.
+==================================================
+SECTION 14 – BACKUP
+==================================================
 
----
-Demo site temporarily available at https://mainchannelbrewing.dev
----
-End of Document
+mysqldump -u mainchannel_user -p mainchannel_db > backup.sql
 
+Restore:
 
+mysql -u mainchannel_user -p mainchannel_db < backup.sql
+
+==================================================
+FINAL RESULT
+==================================================
+
+Fully functional secure web application with:
+- Admin dashboard
+- CRUD operations
+- File uploads
+- Map integration
+- Audit logging
+- Role-based access control
+
+==================================================
+FIN~
