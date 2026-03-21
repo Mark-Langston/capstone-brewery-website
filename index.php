@@ -175,7 +175,8 @@ include 'header.php';
     </div>
 
     <blockquote class="brewmaster">
-      <p>I believe in beer that tells a story—a story of dedication and community. Each batch is a testament to our commitment to excellence and innovation in brewing. It's not just about the brew; it's about creating moments that bring people together.</p>
+      <p>I believe in beer that tells a story—a story of dedication and community. Each batch is a testament to our commitment to excellence and innovation in brewing. 
+          It's not just about the brew; it's about creating moments that bring people together.So, every sip you take is part of a larger narrative, one that I am proud to share with you.</p>
       <cite>— Tyke Jordan, Brew Master</cite>
     </blockquote>
 
