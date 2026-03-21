@@ -370,7 +370,7 @@ $seasonalSpecials = $stmt->fetchAll();
 
         let currentIndex = 0;
         let intervalId = null;
-        const delay = 2500;
+        const delay = 4000;
 
         function showSlide(index) {
             slides[currentIndex].classList.remove('active');
