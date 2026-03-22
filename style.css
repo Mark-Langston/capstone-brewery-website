@@ -1,13 +1,14 @@
 /* =========================================
    Main Channel Brewing
-   Optimized Single-Page Stylesheet
+   Unified Single-Page Stylesheet
    ========================================= */
 
 /* ---------- Theme ---------- */
 :root {
     --bg: #f3efe9;
     --bg-soft: #faf8f4;
-    --surface: #ffffff;
+    --surface: rgba(255, 255, 255, 0.94);
+    --surface-solid: #ffffff;
     --surface-dark: #171717;
     --surface-darker: #101010;
     --text: #1f1f1f;
@@ -23,9 +24,10 @@
     --radius-sm: 10px;
     --radius-md: 16px;
     --radius-lg: 24px;
-    --header-height: 76px;
+    --header-height: 78px;
     --content-width: 1280px;
     --wide-width: 1760px;
+    --transition: 0.22s ease;
 }
 
 /* ---------- Reset ---------- */
@@ -74,7 +76,7 @@ select {
     width: 1px;
     height: 1px;
     overflow: hidden;
-    z-index: 2000;
+    z-index: 3000;
 }
 
 .skip-link:focus {
@@ -92,7 +94,6 @@ select {
     box-shadow: var(--shadow-md);
 }
 
-/* Strong visible focus states for WCAG */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -100,7 +101,7 @@ textarea:focus-visible,
 select:focus-visible {
     outline: 3px solid rgba(215, 106, 43, 0.35);
     outline-offset: 3px;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 /* ---------- Layout ---------- */
@@ -155,7 +156,7 @@ section {
     height: var(--header-height);
     background: rgba(23, 23, 23, 0.94);
     backdrop-filter: blur(10px);
-    z-index: 1000;
+    z-index: 2000;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
 }
@@ -175,15 +176,89 @@ section {
 }
 
 .site-logo {
-    height: 42px;
+    height: 40px;
     width: auto;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    min-width: 0;
+}
+
+.nav-toggle {
+    display: none;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-inverse);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex: 0 0 auto;
+}
+
+.nav-toggle:hover,
+.nav-toggle:focus-visible {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.nav-toggle-bar,
+.nav-toggle-bar::before,
+.nav-toggle-bar::after {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 999px;
+    transition: transform var(--transition), opacity var(--transition);
+    content: "";
+}
+
+.nav-toggle-bar {
+    position: relative;
+}
+
+.nav-toggle-bar::before {
+    position: absolute;
+    top: -6px;
+    left: 0;
+}
+
+.nav-toggle-bar::after {
+    position: absolute;
+    top: 6px;
+    left: 0;
+}
+
+.site-header.menu-open .nav-toggle-bar {
+    background: transparent;
+}
+
+.site-header.menu-open .nav-toggle-bar::before {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.site-header.menu-open .nav-toggle-bar::after {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+.nav-panel {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    min-width: 0;
 }
 
 .main-nav {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 28px;
+    gap: 24px;
     flex-wrap: wrap;
 }
 
@@ -194,22 +269,70 @@ section {
     font-weight: 700;
     font-size: 0.95rem;
     letter-spacing: 0.01em;
+    padding: 10px 2px;
+    transition: color var(--transition);
 }
 
 .main-nav a::after {
     content: "";
     position: absolute;
     left: 0;
-    bottom: -6px;
+    bottom: 4px;
     width: 0;
     height: 2px;
     background: var(--accent);
-    transition: width 0.22s ease;
+    transition: width var(--transition);
+}
+
+.main-nav a:hover,
+.main-nav a:focus-visible,
+.main-nav a.active {
+    color: #ffffff;
 }
 
 .main-nav a:hover::after,
-.main-nav a:focus-visible::after {
+.main-nav a:focus-visible::after,
+.main-nav a.active::after {
     width: 100%;
+}
+
+.main-nav a.active {
+    text-shadow: 0 0 14px rgba(215, 106, 43, 0.22);
+}
+
+.social-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 8px;
+    border-left: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.social-nav a {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    text-decoration: none;
+    transition: transform var(--transition), background var(--transition), color var(--transition);
+}
+
+.social-nav a:hover,
+.social-nav a:focus-visible {
+    transform: translateY(-1px);
+    background: var(--accent);
+    color: #ffffff;
+}
+
+.social-nav svg,
+.social-nav i {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
 }
 
 /* ---------- Hero ---------- */
@@ -229,8 +352,7 @@ section {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background:
-        linear-gradient(180deg, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.56) 100%);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.56) 100%);
 }
 
 .hero-content {
@@ -276,7 +398,7 @@ section {
     background: linear-gradient(180deg, #dd7235 0%, var(--accent-dark) 100%);
 }
 
-/* ---------- Beer / Events Ambiance ---------- */
+/* ---------- Ambiance ---------- */
 .beer-ambiance,
 .events-ambiance {
     width: 100%;
@@ -305,7 +427,6 @@ section {
     box-shadow: var(--shadow-sm);
 }
 
-/* Support both possible grid class names to avoid markup mismatch */
 .beer-menu-grid--homepage,
 .homepage-beer-menu .beer-menu-grid {
     display: grid;
@@ -320,7 +441,7 @@ section {
     min-width: 0;
     height: 100%;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 18px;
     box-shadow: var(--shadow-sm);
@@ -337,7 +458,6 @@ section {
 .beer-card-image {
     width: 100%;
     aspect-ratio: 4 / 3;
-    min-height: 0;
     background: linear-gradient(180deg, #f1ece6 0%, #ebe5dd 100%);
     display: flex;
     align-items: center;
@@ -361,7 +481,6 @@ section {
 .beer-card-content {
     display: flex;
     flex-direction: column;
-    gap: 0;
     flex: 1 1 auto;
     padding: 14px 14px 16px;
 }
@@ -428,7 +547,7 @@ section {
 .carousel-shell {
     position: relative;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 24px;
     box-shadow: var(--shadow-md);
@@ -585,7 +704,8 @@ section {
 
 /* ---------- Content Sections ---------- */
 #about,
-#events,
+#seasonal-specials,
+#locations,
 #contact {
     padding: 72px 0 90px;
     background: transparent;
@@ -610,7 +730,7 @@ section {
 .upcoming-events,
 .about-block-text,
 .brewmaster {
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 18px;
     padding: 24px;
@@ -746,13 +866,6 @@ footer {
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1500px) {
-    .beer-menu-grid--homepage,
-    .homepage-beer-menu .beer-menu-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-}
-
 @media (max-width: 1320px) {
     .beer-menu-grid--homepage,
     .homepage-beer-menu .beer-menu-grid {
@@ -766,6 +879,20 @@ footer {
     .merch-slide {
         padding: 26px 64px 34px;
         gap: 30px;
+    }
+}
+
+@media (max-width: 1180px) {
+    .nav-right {
+        gap: 18px;
+    }
+
+    .main-nav {
+        gap: 18px;
+    }
+
+    .social-nav {
+        gap: 10px;
     }
 }
 
@@ -807,21 +934,75 @@ footer {
     }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 920px) {
     :root {
-        --header-height: 68px;
+        --header-height: 72px;
     }
 
     .site-logo {
         height: 36px;
     }
 
+    .main-nav a {
+        font-size: 0.9rem;
+    }
+
+    .social-nav {
+        padding-left: 0;
+        border-left: 0;
+    }
+}
+
+@media (max-width: 860px) {
+    .nav-toggle {
+        display: inline-flex;
+    }
+
+    .nav-panel {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 14px;
+        left: 14px;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: 18px;
+        background: rgba(18, 18, 18, 0.98);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .site-header.menu-open .nav-panel {
+        display: flex;
+    }
+
     .main-nav {
-        gap: 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
     }
 
     .main-nav a {
-        font-size: 0.88rem;
+        padding: 12px 10px;
+        border-radius: 10px;
+    }
+
+    .main-nav a::after {
+        bottom: 8px;
+    }
+
+    .main-nav a:hover,
+    .main-nav a:focus-visible,
+    .main-nav a.active {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .social-nav {
+        justify-content: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.10);
+        padding-top: 16px;
     }
 
     .beer-menu-grid--homepage,
@@ -854,27 +1035,7 @@ footer {
 
 @media (max-width: 640px) {
     :root {
-        --header-height: 96px;
-    }
-
-    .header-inner {
-        padding: 10px 0;
-        flex-direction: column;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .site-logo {
-        height: 32px;
-    }
-
-    .main-nav {
-        justify-content: center;
-        gap: 12px 16px;
-    }
-
-    .main-nav a {
-        font-size: 0.9rem;
+        --header-height: 72px;
     }
 
     .section-title h2 {
@@ -936,7 +1097,8 @@ footer {
     }
 
     #about,
-    #events,
+    #seasonal-specials,
+    #locations,
     #contact,
     .homepage-merch {
         padding: 56px 0 74px;
