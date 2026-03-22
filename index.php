@@ -27,7 +27,131 @@ include 'header.php';
   <div class="hero-content">
     <h1>Crafting Flavors, Celebrating Community.</h1>
     <p class="hero-tagline">Explore our unique brews and local favorites.</p>
-    <a href="#beer-menu" class="hero-cta">View Beer List</a>
+    <a href="#about" class="hero-cta">Explore the Brewery</a>
+  </div>
+</section>
+
+<section id="about" aria-labelledby="about-heading">
+  <div class="container">
+    <div class="section-title">
+      <h2 id="about-heading">Behind the Brews at Main Channel</h2>
+    </div>
+
+    <div class="brews-pillars">
+      <div class="brews-pillar">
+        <h4>Best ingredients</h4>
+        <p>Sourced locally for unparalleled quality and freshness. Each sip tells a rich story of community and craftsmanship.</p>
+      </div>
+      <div class="brews-pillar">
+        <h4>Our Beers</h4>
+        <p>Unique flavors, classic favorites, and exciting new adventures crafted with passion.</p>
+      </div>
+      <div class="brews-pillar">
+        <h4>Our process</h4>
+        <p>Age-old traditions meet modern innovation to craft the perfect brew every time.</p>
+      </div>
+      <div class="brews-pillar">
+        <h4>Story behind</h4>
+        <p>Every batch has a tale, deeply rooted in inspired beginnings and carefully crafted until the final pour.</p>
+      </div>
+    </div>
+
+    <div class="about-block about-block--split">
+      <div class="about-block-image" style="background-image: url('assets/Bright_Tanks_1.png');"></div>
+      <div class="about-block-text">
+        <h3>Crafted with Care, Served with Pride.</h3>
+        <p>Every beer tells a tale. We combine meticulous brewing methods with locally inspired ingredients and bold, balanced profiles. Redefine expectations with every sip of our signature brews.</p>
+        <a href="#locations" class="about-cta">Visit Our Locations</a>
+      </div>
+    </div>
+
+    <blockquote class="brewmaster">
+      <p>I believe in beer that tells a story—a story of dedication and community. Each batch is a testament to our commitment to excellence and innovation in brewing.
+          It's not just about the brew; it's about creating moments that bring people together. So, every sip you take is part of a larger narrative, one that I am proud to share with you.</p>
+      <cite>— Tyke Jordan, Brew Master</cite>
+    </blockquote>
+
+    <div class="about-block about-block--split about-block--reverse">
+      <div class="about-block-image" style="background-image: url('assets/capstonephoto6-4af5d255-0ac4-4d3b-ab76-d91984a51ce2.png');"></div>
+
+      <div class="about-block-text">
+        <h3>Meet the Crew</h3>
+        <p>Discover the passionate team behind our exceptional craft beers.</p>
+
+        <div class="crew-grid">
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Clay Smith</h4>
+            <p class="crew-card-role">Founder</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Jeff Gossage</h4>
+            <p class="crew-card-role">General Manager</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Prentice Satterfield</h4>
+            <p class="crew-card-role">Sales Manager</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Brian Satterfield</h4>
+            <p class="crew-card-role">Cellar Operator</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Tyke Jordan</h4>
+            <p class="crew-card-role">Brew Master</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Drew Martin</h4>
+            <p class="crew-card-role">Guntersville Taproom Manager</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Tom Koury</h4>
+            <p class="crew-card-role">Albertville Taproom Manager</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Aaliyah Bird</h4>
+            <p class="crew-card-role">Albertville Taproom Assistant Manager</p>
+          </div>
+
+          <div class="crew-card">
+            <div class="crew-card-image" aria-hidden="true"></div>
+            <h4>Leigh Ellen Styke</h4>
+            <p class="crew-card-role">Event Coordinator/Bartender</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="seasonal-specials" aria-labelledby="seasonal-specials-heading">
+  <div class="container">
+    <div class="section-title">
+      <h2 id="seasonal-specials-heading">Seasonal Specials</h2>
+      <p class="section-subtitle">Featured seasonal releases and limited-time pours will appear here.</p>
+    </div>
+
+    <div class="upcoming-events">
+      <h3>Coming Soon</h3>
+      <p>
+        This section is reserved for rotating seasonal beers, limited releases, featured flights,
+        and upcoming brewery specials. Your team can swap this placeholder for live seasonal inventory later.
+      </p>
+    </div>
   </div>
 </section>
 
@@ -140,150 +264,31 @@ include 'header.php';
   </div>
 </section>
 
-<section id="about" aria-labelledby="about-heading">
+<section id="locations" aria-labelledby="locations-heading">
   <div class="container">
     <div class="section-title">
-      <h2 id="about-heading">Behind the Brews at Main Channel</h2>
+      <h2 id="locations-heading">Locations</h2>
+      <p class="section-subtitle">A location finder or map experience can be added here next.</p>
     </div>
 
-    <div class="brews-pillars">
-      <div class="brews-pillar">
-        <h4>Best ingredients</h4>
-        <p>Sourced locally for unparalleled quality and freshness. Each sip tells a rich story of community and craftsmanship.</p>
-      </div>
-      <div class="brews-pillar">
-        <h4>Our Beers</h4>
-        <p>Unique flavors, classic favorites, and exciting new adventures crafted with passion.</p>
-      </div>
-      <div class="brews-pillar">
-        <h4>Our process</h4>
-        <p>Age-old traditions meet modern innovation to craft the perfect brew every time.</p>
-      </div>
-      <div class="brews-pillar">
-        <h4>Story behind</h4>
-        <p>Every batch has a tale, deeply rooted in inspired beginnings and carefully crafted until the final pour.</p>
-      </div>
-    </div>
-
-    <div class="about-block about-block--split">
-      <div class="about-block-image" style="background-image: url('assets/Bright_Tanks_1.png');"></div>
-      <div class="about-block-text">
-        <h3>Crafted with Care, Served with Pride.</h3>
-        <p>Every beer tells a tale. We combine meticulous brewing methods with locally inspired ingredients and bold, balanced profiles. Redefine expectations with every sip of our signature brews.</p>
-        <a href="#events" class="about-cta">Visit Our Taprooms</a>
-      </div>
-    </div>
-
-    <blockquote class="brewmaster">
-      <p>I believe in beer that tells a story—a story of dedication and community. Each batch is a testament to our commitment to excellence and innovation in brewing. 
-          It's not just about the brew; it's about creating moments that bring people together.So, every sip you take is part of a larger narrative, one that I am proud to share with you.</p>
-      <cite>— Tyke Jordan, Brew Master</cite>
-    </blockquote>
-
-    <div class="about-block about-block--split about-block--reverse">
-      <div class="about-block-image" style="background-image: url('assets/capstonephoto6-4af5d255-0ac4-4d3b-ab76-d91984a51ce2.png');"></div>
-
-      <div class="about-block-text">
-        <h3>Meet the Crew</h3>
-        <p>Discover the passionate team behind our exceptional craft beers.</p>
-
-        <div class="crew-grid">
-              <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Clay Smith</h4>
-            <p class="crew-card-role">Founder</p>
-          </div>
-            
-          <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Jeff Gossage</h4>
-            <p class="crew-card-role">General Manager</p>
-          </div>
-
-          <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Prentice Satterfield</h4>
-            <p class="crew-card-role">Sales Manager</p>
-          </div>
-
-          <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Brian Satterfield</h4>
-            <p class="crew-card-role">Cellar Operator</p>
-          </div>
-
-          <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Tyke Jordan</h4>
-            <p class="crew-card-role">Brew Master</p>
-          </div>
-
-          <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Drew Martin</h4>
-            <p class="crew-card-role">Guntersville Taproom Manager</p>
-          </div>
-
-          <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Tom Koury</h4>
-            <p class="crew-card-role">Albertville Taproom Manager</p>
-          </div>
-
-          <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Aaliyah Bird</h4>
-            <p class="crew-card-role">Albertville Taproom Assistant Manager</p>
-          </div>
-
-          <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
-            <h4>Leigh Ellen Styke</h4>
-            <p class="crew-card-role">Event Coordinator/Bartender</p>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="events" aria-labelledby="events-heading">
-  <div class="events-ambiance" style="background-image: url('assets/Stage.png');" role="img" aria-label="Interior stage area with brick wall and Main Channel banner"></div>
-  <div class="container">
-    <div class="section-title">
-      <h2 id="events-heading">Visit Our Taprooms</h2>
-      <p class="section-subtitle">Click on each location for details.</p>
-    </div>
     <div class="locations-grid">
       <div class="location-card">
-        <h3>Guntersville, Alabama</h3>
-        <p>Stop by, say hello, at our original location. Come for the beer, stay for the laughs.</p>
-        <address>
-          2090 Gunter Ave, Guntersville AL 35976<br>
-          Mon–Thu 3–9 · Fri 3–10 · Sat–Sun 12–10
-        </address>
-        <a href="tel:+12569605070">(256) 960-5070</a><br>
-        <a href="https://www.google.com/maps/search/2090+Gunter+Ave,+Guntersville+AL+35976" target="_blank" rel="noopener">Get directions</a>
+        <h3>Guntersville</h3>
+        <p>This placeholder can become a detailed taproom card, including hours, address, phone number, and map integration.</p>
       </div>
+
       <div class="location-card">
-        <h3>Albertville, Alabama</h3>
-        <p>Our second location. We're open every day from 1PM to 10PM.</p>
-        <address>
-          210 Sand Mountain Dr, Albertville, AL 35950<br>
-          Tue–Thu 11–9 · Fri 11–10 · Sat 12–10 · Closed Sun & Mon
-        </address>
-        <a href="tel:+12566600335">(256) 660-0335</a><br>
-        <a href="https://www.google.com/maps/search/210+Sand+Mountain+Dr,+Albertville,+AL+35950" target="_blank" rel="noopener">Get directions</a>
+        <h3>Albertville</h3>
+        <p>This placeholder can also support future business partner locations, store availability, or interactive location pins.</p>
       </div>
     </div>
+
     <div class="upcoming-events">
-      <h3>Upcoming Events</h3>
-      <ul class="events-list">
-        <li><strong>Live Music</strong> — Friday 7pm (both locations)</li>
-        <li><strong>Trivia Night</strong> — Wednesday 6pm</li>
-        <li><strong>Seasonal Release</strong> — TBD. Follow us for updates.</li>
-      </ul>
+      <h3>Future Enhancement</h3>
+      <p>
+        This section is reserved for a map, business locations carrying Main Channel Brewing products,
+        or a taproom finder experience once the team is ready to implement it.
+      </p>
     </div>
   </div>
 </section>
@@ -389,4 +394,3 @@ include 'header.php';
 <?php endif; ?>
 
 <?php include 'footer.php'; ?>
- 
