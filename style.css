@@ -183,8 +183,9 @@ section {
 .nav-right {
     display: flex;
     align-items: center;
-    gap: 26px;
+    gap: 14px;
     min-width: 0;
+    margin-left: auto;
 }
 
 .nav-toggle {
@@ -250,7 +251,7 @@ section {
 .nav-panel {
     display: flex;
     align-items: center;
-    gap: 26px;
+    gap: 22px;
     min-width: 0;
 }
 
@@ -258,7 +259,7 @@ section {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 24px;
+    gap: 18px;
     flex-wrap: wrap;
 }
 
@@ -304,7 +305,7 @@ section {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding-left: 8px;
+    padding-left: 14px;
     border-left: 1px solid rgba(255, 255, 255, 0.10);
 }
 
@@ -888,7 +889,11 @@ footer {
     }
 
     .main-nav {
-        gap: 18px;
+        gap: 14px;
+    }
+
+    .main-nav a {
+        font-size: 0.9rem;
     }
 
     .social-nav {
@@ -943,10 +948,6 @@ footer {
         height: 36px;
     }
 
-    .main-nav a {
-        font-size: 0.9rem;
-    }
-
     .social-nav {
         padding-left: 0;
         border-left: 0;
@@ -982,9 +983,12 @@ footer {
         flex-direction: column;
         align-items: stretch;
         gap: 4px;
+        flex-wrap: nowrap;
     }
 
     .main-nav a {
+        display: block;
+        width: 100%;
         padding: 12px 10px;
         border-radius: 10px;
     }
@@ -1002,7 +1006,9 @@ footer {
     .social-nav {
         justify-content: center;
         border-top: 1px solid rgba(255, 255, 255, 0.10);
+        border-left: 0;
         padding-top: 16px;
+        margin: 0;
     }
 
     .beer-menu-grid--homepage,
@@ -1033,11 +1039,13 @@ footer {
     }
 }
 
-@media (max-width: 640px) {
-    :root {
-        --header-height: 72px;
+@media (min-width: 861px) {
+    .nav-panel {
+        display: flex !important;
     }
+}
 
+@media (max-width: 640px) {
     .section-title h2 {
         font-size: 2rem;
     }
@@ -1119,6 +1127,15 @@ footer {
     .homepage-merch .container,
     .container {
         width: calc(100% - 16px);
+    }
+
+    .site-logo {
+        height: 30px;
+    }
+
+    .nav-toggle {
+        width: 42px;
+        height: 42px;
     }
 
     .merch-content-box {
