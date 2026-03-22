@@ -148,8 +148,8 @@ include 'header.php';
     <div class="upcoming-events">
       <h3>Coming Soon</h3>
       <p>
-        This section is reserved for rotating seasonal beers, limited releases, featured flights,
-        and upcoming brewery specials. Your team can swap this placeholder for live seasonal inventory later.
+        This section is reserved for rotating seasonal beers, limited releases,
+        and upcoming brewery specials. This can be swapped for live seasonal inventory later.
       </p>
     </div>
   </div>
