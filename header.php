@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Favicon -->
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon.png">
-<link rel="apple-touch-icon" href="/assets/images/favicon/favicon.png">
-  
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Main Channel Brewing</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/images/favicon/favicon.png">
 
-<link rel="stylesheet" href="style.css?v=10">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Channel Brewing</title>
+
+  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
   <div class="header-inner">
 
     <div class="logo-container">
-      <a href="index.php#hero" aria-label="Main Channel Brewing home">
+      <a href="#hero" aria-label="Main Channel Brewing home">
         <img
           src="assets/images/logos/logo-white.png"
           alt="Main Channel Brewing Company Logo"
@@ -43,13 +43,13 @@
 
       <div class="nav-panel" id="navPanel">
         <nav class="main-nav" aria-label="Primary">
-          <a href="index.php#hero">Home</a>
-          <a href="index.php#about">About</a>
-          <a href="index.php#seasonal-specials">Seasonal</a>
-          <a href="index.php#beer-menu">Beer Menu</a>
-          <a href="index.php#merch">Merch</a>
-          <a href="index.php#locations">Locations</a>
-          <a href="index.php#contact">Contact</a>
+          <a href="#hero">Home</a>
+          <a href="#about">About</a>
+          <a href="#seasonal-specials">Seasonal</a>
+          <a href="#beer-menu">Beer Menu</a>
+          <a href="#merch">Merch</a>
+          <a href="#locations">Locations</a>
+          <a href="#contact">Contact</a>
         </nav>
 
         <div class="social-nav" aria-label="Social media">
@@ -77,13 +77,12 @@
 
     function getSections() {
         return navLinks
-            .map((link) => {
+            .map(function (link) {
                 const href = link.getAttribute('href') || '';
-                const hashIndex = href.indexOf('#');
-                if (hashIndex === -1) {
+                if (!href.startsWith('#') || href === '#') {
                     return null;
                 }
-                return document.querySelector(href.slice(hashIndex));
+                return document.querySelector(href);
             })
             .filter(Boolean);
     }
@@ -139,7 +138,7 @@
 
         navLinks.forEach(function (link) {
             const href = link.getAttribute('href') || '';
-            const target = href.includes('#') ? href.split('#')[1] : '';
+            const target = href.startsWith('#') ? href.slice(1) : '';
             link.classList.toggle('active', target === currentId);
         });
     }
