@@ -530,6 +530,175 @@ section {
     overflow: hidden;
 }
 
+/* ---------- Seasonal Specials ---------- */
+.seasonal-specials-container {
+    max-width: 1300px;
+}
+
+.seasonal-section-title {
+    margin-bottom: 40px;
+}
+
+.seasonal-carousel-shell {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: var(--shadow-md);
+    padding: 14px 0 22px;
+}
+
+.seasonal-carousel {
+    overflow: hidden;
+}
+
+.seasonal-track {
+    display: flex;
+    transition: transform 0.6s ease;
+    will-change: transform;
+}
+
+.seasonal-slide {
+    min-width: 100%;
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 42px;
+    min-height: 460px;
+    padding: 28px 76px 38px;
+}
+
+.seasonal-image-panel {
+    flex: 1 1 58%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.seasonal-image-wrap {
+    width: 100%;
+    max-width: 620px;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.seasonal-image-wrap img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 380px;
+    object-fit: contain;
+}
+
+.seasonal-no-image {
+    width: 100%;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    text-align: center;
+}
+
+.seasonal-content-panel {
+    flex: 0 0 340px;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.seasonal-content-box {
+    width: 100%;
+    padding: 24px 20px;
+    background: linear-gradient(180deg, #fffaf7 0%, #ffffff 100%);
+    border: 1px solid #ebd4c5;
+    border-radius: 18px;
+    box-shadow: var(--shadow-sm);
+}
+
+.seasonal-content-box h3 {
+    margin: 0 0 12px;
+    font-size: 1.45rem;
+    line-height: 1.25;
+    font-weight: 500;
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+.seasonal-content-box p {
+    margin: 0;
+    color: #434343;
+    font-size: 0.96rem;
+    line-height: 1.72;
+}
+
+.seasonal-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--accent);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 5;
+    box-shadow: var(--shadow-sm);
+}
+
+.seasonal-carousel-arrow:hover,
+.seasonal-carousel-arrow:focus-visible {
+    background: #ffffff;
+    color: var(--accent-dark);
+}
+
+.seasonal-carousel-arrow--prev {
+    left: 14px;
+}
+
+.seasonal-carousel-arrow--next {
+    right: 14px;
+}
+
+.seasonal-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.seasonal-carousel-dot {
+    width: 11px;
+    height: 11px;
+    border: none;
+    border-radius: 50%;
+    background: #d9b59b;
+    opacity: 0.55;
+    cursor: pointer;
+    padding: 0;
+}
+
+.seasonal-carousel-dot.active {
+    opacity: 1;
+    background: var(--accent);
+}
+
+.seasonal-empty {
+    text-align: center;
+    padding: 42px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
 /* ---------- Merch ---------- */
 .homepage-merch {
     padding: 72px 0 90px;
@@ -877,6 +1046,7 @@ footer {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .seasonal-slide,
     .merch-slide {
         padding: 26px 64px 34px;
         gap: 30px;
@@ -930,8 +1100,13 @@ footer {
         order: initial;
     }
 
+    .seasonal-slide,
     .merch-slide {
         padding: 24px 56px 30px;
+    }
+
+    .seasonal-image-wrap img {
+        max-height: 320px;
     }
 
     .merch-image-wrap img {
@@ -1016,6 +1191,7 @@ footer {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .seasonal-slide,
     .merch-slide {
         flex-direction: column;
         min-height: auto;
@@ -1023,12 +1199,15 @@ footer {
         padding: 24px 48px 28px;
     }
 
+    .seasonal-image-panel,
+    .seasonal-content-panel,
     .merch-image-panel,
     .merch-content-panel {
         width: 100%;
         flex: 1 1 auto;
     }
 
+    .seasonal-content-box,
     .merch-content-box {
         max-width: 560px;
         margin: 0 auto;
@@ -1074,32 +1253,39 @@ footer {
         overflow: visible;
     }
 
+    .seasonal-carousel-shell,
     .carousel-shell {
         padding-top: 8px;
     }
 
+    .seasonal-slide,
     .merch-slide {
         padding: 18px 34px 24px;
     }
 
+    .seasonal-image-wrap,
     .merch-image-wrap {
         min-height: 220px;
     }
 
+    .seasonal-image-wrap img,
     .merch-image-wrap img {
         max-height: 240px;
     }
 
+    .seasonal-carousel-arrow,
     .carousel-arrow {
         width: 38px;
         height: 38px;
         font-size: 1.7rem;
     }
 
+    .seasonal-carousel-arrow--prev,
     .carousel-arrow.prev {
         left: 6px;
     }
 
+    .seasonal-carousel-arrow--next,
     .carousel-arrow.next {
         right: 6px;
     }
@@ -1138,10 +1324,12 @@ footer {
         height: 42px;
     }
 
+    .seasonal-content-box,
     .merch-content-box {
         padding: 18px 15px;
     }
 
+    .seasonal-content-box h3,
     .merch-content-box h3 {
         font-size: 1.2rem;
     }
@@ -1150,6 +1338,7 @@ footer {
         font-size: 1.2rem;
     }
 
+    .seasonal-content-box p,
     .merch-copy {
         font-size: 0.92rem;
     }
