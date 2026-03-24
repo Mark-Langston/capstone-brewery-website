@@ -532,21 +532,17 @@ include 'header.php';
     startAutoRotate();
 })();
 </script>
+<?php endif; ?>
+
 
 <script>
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
-
     const targetId = this.getAttribute('href');
     const target = document.querySelector(targetId);
-
     if (target) {
-      target.scrollIntoView({
-        behavior: 'smooth'
-      });
-
-      // Remove the hash from the URL after scrolling
+      target.scrollIntoView({ behavior: 'smooth' });
       setTimeout(() => {
         history.replaceState(null, null, ' ');
       }, 300);
@@ -555,6 +551,5 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 </script>
 
-<?php endif; ?>
 
 <?php include 'footer.php'; ?>
