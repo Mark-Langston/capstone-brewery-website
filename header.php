@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon.png">
+<link rel="apple-touch-icon" href="/assets/images/favicon/favicon.png">
+  
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Main Channel Brewing</title>
