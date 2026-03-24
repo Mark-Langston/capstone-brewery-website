@@ -10,6 +10,13 @@ $inventoryStmt = $pdo->query("
 ");
 $inventoryItems = $inventoryStmt->fetchAll();
 
+$seasonalStmt = $pdo->query("
+    SELECT seasonal_special_id, header_text, description, image_path
+    FROM seasonal_specials
+    ORDER BY created_at DESC, seasonal_special_id DESC
+");
+$seasonalSpecials = $seasonalStmt->fetchAll();
+
 $merchStmt = $pdo->query("
     SELECT merch_id, name, price, image_path
     FROM merch
@@ -139,19 +146,65 @@ include 'header.php';
 </section>
 
 <section id="seasonal-specials" aria-labelledby="seasonal-specials-heading">
-  <div class="container">
-    <div class="section-title">
+  <div class="container seasonal-specials-container">
+    <div class="section-title seasonal-section-title">
       <h2 id="seasonal-specials-heading">Seasonal Specials</h2>
-      <p class="section-subtitle">Featured seasonal releases and limited-time pours will appear here.</p>
-    </div>
-
-    <div class="upcoming-events">
-      <h3>Coming Soon</h3>
-      <p>
-        This section is reserved for rotating seasonal beers, limited releases,
-        and upcoming brewery specials. This can be swapped for live seasonal inventory later.
+      <p class="section-subtitle">
+        Explore our seasonal and new release brews, crafted to embrace the spirit of each season.
+        From bright, refreshing ales to richer, limited-time creations, each pour brings a fresh taste of now.
       </p>
     </div>
+
+    <?php if (empty($seasonalSpecials)): ?>
+      <div class="seasonal-empty">
+        <h3>No seasonal specials are available right now.</h3>
+        <p>Please check back again soon.</p>
+      </div>
+    <?php else: ?>
+      <div class="seasonal-carousel-shell">
+        <button class="seasonal-carousel-arrow seasonal-carousel-arrow--prev" type="button" aria-label="Previous seasonal special">&#8249;</button>
+        <button class="seasonal-carousel-arrow seasonal-carousel-arrow--next" type="button" aria-label="Next seasonal special">&#8250;</button>
+
+        <div class="seasonal-carousel" id="seasonalCarousel">
+          <div class="seasonal-track" id="seasonalTrack">
+            <?php foreach ($seasonalSpecials as $item): ?>
+              <article class="seasonal-slide">
+                <div class="seasonal-image-panel">
+                  <div class="seasonal-image-wrap">
+                    <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string) $item['image_path'], '/'))): ?>
+                      <img
+                        src="/<?= htmlspecialchars(ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
+                        alt="<?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?>"
+                      >
+                    <?php else: ?>
+                      <div class="seasonal-no-image">No Image Available</div>
+                    <?php endif; ?>
+                  </div>
+                </div>
+
+                <div class="seasonal-content-panel">
+                  <div class="seasonal-content-box">
+                    <h3><?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?></h3>
+                    <p><?= nl2br(htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8')) ?></p>
+                  </div>
+                </div>
+              </article>
+            <?php endforeach; ?>
+          </div>
+        </div>
+
+        <div class="seasonal-carousel-dots" id="seasonalCarouselDots">
+          <?php foreach ($seasonalSpecials as $index => $item): ?>
+            <button
+              class="seasonal-carousel-dot<?= $index === 0 ? ' active' : '' ?>"
+              type="button"
+              aria-label="Go to seasonal special <?= $index + 1 ?>"
+              data-slide-index="<?= $index ?>"
+            ></button>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
 </section>
 
@@ -304,6 +357,94 @@ include 'header.php';
     </div>
   </div>
 </section>
+
+<?php if (!empty($seasonalSpecials)): ?>
+<script>
+(function () {
+    const slides = Array.from(document.querySelectorAll('.seasonal-slide'));
+    const dots = Array.from(document.querySelectorAll('.seasonal-carousel-dot'));
+    const prevBtn = document.querySelector('.seasonal-carousel-arrow--prev');
+    const nextBtn = document.querySelector('.seasonal-carousel-arrow--next');
+    const carousel = document.getElementById('seasonalCarousel');
+    const track = document.getElementById('seasonalTrack');
+
+    if (!slides.length || !track || !carousel || !prevBtn || !nextBtn) {
+        return;
+    }
+
+    let currentIndex = 0;
+    let intervalId = null;
+    const delay = 5000;
+
+    function updateDots() {
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    function showSlide(index) {
+        currentIndex = (index + slides.length) % slides.length;
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        updateDots();
+    }
+
+    function nextSlide() {
+        showSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+        showSlide(currentIndex - 1);
+    }
+
+    function startAutoRotate() {
+        stopAutoRotate();
+        if (slides.length > 1) {
+            intervalId = window.setInterval(nextSlide, delay);
+        }
+    }
+
+    function stopAutoRotate() {
+        if (intervalId !== null) {
+            window.clearInterval(intervalId);
+            intervalId = null;
+        }
+    }
+
+    nextBtn.addEventListener('click', function () {
+        nextSlide();
+        startAutoRotate();
+    });
+
+    prevBtn.addEventListener('click', function () {
+        prevSlide();
+        startAutoRotate();
+    });
+
+    dots.forEach(function (dot, index) {
+        dot.addEventListener('click', function () {
+            showSlide(index);
+            startAutoRotate();
+        });
+    });
+
+    carousel.addEventListener('mouseenter', stopAutoRotate);
+    carousel.addEventListener('mouseleave', startAutoRotate);
+    carousel.addEventListener('touchstart', stopAutoRotate, { passive: true });
+    carousel.addEventListener('touchend', startAutoRotate);
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            stopAutoRotate();
+        } else {
+            startAutoRotate();
+        }
+    });
+
+    showSlide(0);
+    startAutoRotate();
+})();
+</script>
+<?php endif; ?>
 
 <?php if (!empty($merchItems)): ?>
 <script>
