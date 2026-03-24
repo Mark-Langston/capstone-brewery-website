@@ -5,8 +5,8 @@
 
 /* ---------- Theme ---------- */
 :root {
-    --bg: #f3efe9;
-    --bg-soft: #faf8f4;
+    --bg: #ffffff;
+    --bg-soft: #ffffff;
     --surface: rgba(255, 255, 255, 0.94);
     --surface-solid: #ffffff;
     --surface-dark: #171717;
