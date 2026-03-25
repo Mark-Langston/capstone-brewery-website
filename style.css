@@ -1409,3 +1409,33 @@ footer {
         font-size: 0.92rem;
     }
 }
+
+
+/* ---------- Crew Card Interactions ---------- */
+.crew-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.crew-card:hover,
+.crew-card:focus-within {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+}
+
+.crew-card-image,
+.crew-card-image-clay,
+.crew-card-image-jeff,
+.crew-card-image-prentice,
+.crew-card-image-brian,
+.crew-card-image-tyke,
+.crew-card-image-drew,
+.crew-card-image-tom,
+.crew-card-image-aaliyah,
+.crew-card-image-leigh-ellen {
+    transition: transform 0.25s ease;
+}
+
+.crew-card:hover .crew-card-image,
+.crew-card:hover [class^="crew-card-image-"] {
+    transform: scale(1.05);
+}
