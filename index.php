@@ -137,7 +137,7 @@ include 'header.php';
           <div class="crew-card">
             <div class="crew-card-image-leigh-ellen" aria-hidden="true"></div>
             <h4>Leigh Ellen Styke</h4>
-            <p class="crew-card-role">Event Coordinator/Bartender</p>
+            <p class="crew-card-role">Event Coordinator / Bartender</p>
           </div>
         </div>
       </div>
