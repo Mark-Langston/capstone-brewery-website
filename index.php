@@ -87,55 +87,55 @@ include 'header.php';
 
         <div class="crew-grid">
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-clay" aria-hidden="true"></div>
             <h4>Clay Smith</h4>
             <p class="crew-card-role">Founder</p>
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-jeff" aria-hidden="true"></div>
             <h4>Jeff Gossage</h4>
             <p class="crew-card-role">General Manager</p>
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-prentice" aria-hidden="true"></div>
             <h4>Prentice Satterfield</h4>
             <p class="crew-card-role">Sales Manager</p>
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-brian" aria-hidden="true"></div>
             <h4>Brian Satterfield</h4>
             <p class="crew-card-role">Cellar Operator</p>
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-tyke" aria-hidden="true"></div>
             <h4>Tyke Jordan</h4>
             <p class="crew-card-role">Brew Master</p>
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-drew" aria-hidden="true"></div>
             <h4>Drew Martin</h4>
             <p class="crew-card-role">Guntersville Taproom Manager</p>
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-tom" aria-hidden="true"></div>
             <h4>Tom Koury</h4>
             <p class="crew-card-role">Albertville Taproom Manager</p>
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-aaliyah" aria-hidden="true"></div>
             <h4>Aaliyah Bird</h4>
             <p class="crew-card-role">Albertville Taproom Assistant Manager</p>
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image" aria-hidden="true"></div>
+            <div class="crew-card-image-leigh-ellen" aria-hidden="true"></div>
             <h4>Leigh Ellen Styke</h4>
             <p class="crew-card-role">Event Coordinator/Bartender</p>
           </div>
