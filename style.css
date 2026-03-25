@@ -966,12 +966,60 @@ section {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.crew-card-image {
+.crew-card-image,
+.crew-card-image-clay,
+.crew-card-image-jeff,
+.crew-card-image-prentice,
+.crew-card-image-brian,
+.crew-card-image-tyke,
+.crew-card-image-drew,
+.crew-card-image-tom,
+.crew-card-image-aaliyah,
+.crew-card-image-leigh-ellen {
     width: 100%;
-    height: 120px;
+    height: 180px;
     margin-bottom: 12px;
     border-radius: 12px;
-    background: linear-gradient(180deg, #f0ece6 0%, #e9e3dc 100%);
+    background-color: #f0ece6;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.crew-card-image-clay {
+    background-image: url('assets/images/crew/clay-smith.jpg');
+}
+
+.crew-card-image-jeff {
+    background-image: url('assets/images/crew/jeff-gossage.jpg');
+}
+
+.crew-card-image-prentice {
+    background-image: url('assets/images/crew/prentice-satterfield.jpg');
+}
+
+.crew-card-image-brian {
+    background-image: url('assets/images/crew/brian-satterfield.jpg');
+}
+
+.crew-card-image-tyke {
+    background-image: url('assets/images/crew/tyke-jordan.jpg');
+}
+
+.crew-card-image-drew {
+    background-image: url('assets/images/crew/drew-martin.jpg');
+}
+
+.crew-card-image-tom {
+    background-image: url('assets/images/crew/tom-koury.jpg');
+}
+
+.crew-card-image-aaliyah {
+    background-image: url('assets/images/crew/aaliyah-bird.jpg');
+}
+
+.crew-card-image-leigh-ellen {
+    background-image: url('assets/images/crew/leigh-ellen-styke.jpg');
 }
 
 .crew-card-role {
