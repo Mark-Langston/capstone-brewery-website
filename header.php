@@ -45,7 +45,7 @@
         <nav class="main-nav" aria-label="Primary">
           <a href="#hero">Home</a>
           <a href="#about">About</a>
-          <a href="#seasonal-specials">Seasonal</a>
+          <a href="#seasonal-specials">Seasonal Specials</a>
           <a href="#beer-menu">Beer Menu</a>
           <a href="#merch">Merch</a>
           <a href="#locations">Locations</a>
