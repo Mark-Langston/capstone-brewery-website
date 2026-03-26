@@ -1,79 +1,24 @@
 <?php
 declare(strict_types=1);
-session_start();
 
+session_start();
 require_once __DIR__ . '/db.php';
 
 /*
 |--------------------------------------------------------------------------
 | AUTHORIZATION
 |--------------------------------------------------------------------------
-| $_SESSION['user_id']
-| $_SESSION['role']
 */
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: /login.php');
     exit;
 }
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'superadmin') {
+$role = $_SESSION['role'] ?? '';
+
+if ($role !== 'superadmin') {
     http_response_code(403);
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Access Denied</title>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background: #111827;
-                color: #f9fafb;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 100vh;
-            }
-
-            .denied-card {
-                background: #1f2937;
-                border: 1px solid #374151;
-                border-radius: 14px;
-                padding: 32px;
-                max-width: 480px;
-                width: 90%;
-                text-align: center;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-            }
-
-            .btn {
-                display: inline-block;
-                margin-top: 18px;
-                background: #2563eb;
-                color: #fff;
-                text-decoration: none;
-                padding: 12px 18px;
-                border-radius: 10px;
-                font-weight: 600;
-            }
-
-            .btn:hover {
-                background: #1d4ed8;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="denied-card">
-            <h1>Access Denied</h1>
-            <p>You must be logged in as a superadmin to view this page.</p>
-            <a class="btn" href="AdminDashboard.php">Admin Dashboard</a>
-        </div>
-    </body>
-    </html>
-    <?php
-    exit;
+    exit('Access denied.');
 }
 
 /*
@@ -87,7 +32,7 @@ if (empty($_SESSION['csrf_token'])) {
 
 /*
 |--------------------------------------------------------------------------
-| FLASH MESSAGE HELPERS
+| FLASH HELPERS
 |--------------------------------------------------------------------------
 */
 function setFlash(string $message, string $type = 'success'): void
@@ -104,7 +49,7 @@ function getFlash(): ?array
 
     $flash = [
         'message' => $_SESSION['flash_message'],
-        'type' => $_SESSION['flash_type']
+        'type' => $_SESSION['flash_type'],
     ];
 
     unset($_SESSION['flash_message'], $_SESSION['flash_type']);
@@ -116,22 +61,22 @@ function getFlash(): ?array
 |--------------------------------------------------------------------------
 | AUDIT LOG HELPER
 |--------------------------------------------------------------------------
-| inventory_id is nullable here because user-management actions are not tied
-| to inventory records.
 */
 function writeAuditLog(
     PDO $pdo,
-    int $actingUserId,
+    int $userId,
+    string $entityType,
+    ?int $entityId,
     string $actionType,
-    string $fieldChanged,
+    ?string $fieldChanged,
     ?string $oldValue,
-    ?string $newValue,
-    ?int $inventoryId = null
+    ?string $newValue
 ): void {
     $stmt = $pdo->prepare("
         INSERT INTO audit_log (
             user_id,
-            inventory_id,
+            entity_type,
+            entity_id,
             action_type,
             field_changed,
             old_value,
@@ -139,7 +84,8 @@ function writeAuditLog(
             change_timestamp
         ) VALUES (
             :user_id,
-            :inventory_id,
+            :entity_type,
+            :entity_id,
             :action_type,
             :field_changed,
             :old_value,
@@ -148,16 +94,22 @@ function writeAuditLog(
         )
     ");
 
-    $stmt->bindValue(':user_id', $actingUserId, PDO::PARAM_INT);
+    $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+    $stmt->bindValue(':entity_type', $entityType, PDO::PARAM_STR);
 
-    if ($inventoryId === null) {
-        $stmt->bindValue(':inventory_id', null, PDO::PARAM_NULL);
+    if ($entityId === null) {
+        $stmt->bindValue(':entity_id', null, PDO::PARAM_NULL);
     } else {
-        $stmt->bindValue(':inventory_id', $inventoryId, PDO::PARAM_INT);
+        $stmt->bindValue(':entity_id', $entityId, PDO::PARAM_INT);
     }
 
     $stmt->bindValue(':action_type', $actionType, PDO::PARAM_STR);
-    $stmt->bindValue(':field_changed', $fieldChanged, PDO::PARAM_STR);
+
+    if ($fieldChanged === null) {
+        $stmt->bindValue(':field_changed', null, PDO::PARAM_NULL);
+    } else {
+        $stmt->bindValue(':field_changed', $fieldChanged, PDO::PARAM_STR);
+    }
 
     if ($oldValue === null) {
         $stmt->bindValue(':old_value', null, PDO::PARAM_NULL);
@@ -190,11 +142,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
     $password = $_POST['password'] ?? '';
     $firstName = trim($_POST['first_name'] ?? '');
     $lastName = trim($_POST['last_name'] ?? '');
-    $role = trim($_POST['role'] ?? '');
+    $selectedRole = trim($_POST['role'] ?? '');
 
     $allowedRoles = ['superadmin', 'admin'];
 
-    if ($email === '' || $password === '' || $firstName === '' || $lastName === '' || $role === '') {
+    if ($email === '' || $password === '' || $firstName === '' || $lastName === '' || $selectedRole === '') {
         setFlash('All fields are required.', 'error');
         header('Location: manage_users.php');
         exit;
@@ -206,14 +158,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
         exit;
     }
 
-    if (!in_array($role, $allowedRoles, true)) {
+    if (!in_array($selectedRole, $allowedRoles, true)) {
         setFlash('Invalid role selected.', 'error');
         header('Location: manage_users.php');
         exit;
     }
 
+    if (strlen($password) < 8) {
+        setFlash('Password must be at least 8 characters long.', 'error');
+        header('Location: manage_users.php');
+        exit;
+    }
+
     try {
-        $checkStmt = $pdo->prepare("SELECT user_id FROM users WHERE email = :email LIMIT 1");
+        $checkStmt = $pdo->prepare("
+            SELECT user_id
+            FROM users
+            WHERE email = :email
+            LIMIT 1
+        ");
         $checkStmt->execute([':email' => $email]);
 
         if ($checkStmt->fetch()) {
@@ -223,6 +186,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
         }
 
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+        $pdo->beginTransaction();
 
         $insertStmt = $pdo->prepare("
             INSERT INTO users (
@@ -249,24 +214,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
             ':password_hash' => $passwordHash,
             ':first_name' => $firstName,
             ':last_name' => $lastName,
-            ':role' => $role
+            ':role' => $selectedRole,
         ]);
 
-        $newUserId = (int)$pdo->lastInsertId();
+        $newUserId = (int) $pdo->lastInsertId();
+        $actingUserId = (int) $_SESSION['user_id'];
 
-        writeAuditLog(
-            $pdo,
-            (int)$_SESSION['user_id'],
-            'CREATE_USER',
-            'users',
-            null,
-            "Created user_id={$newUserId}, email={$email}, first_name={$firstName}, last_name={$lastName}, role={$role}"
-        );
+        writeAuditLog($pdo, $actingUserId, 'users', $newUserId, 'CREATE', 'email', null, $email);
+        writeAuditLog($pdo, $actingUserId, 'users', $newUserId, 'CREATE', 'first_name', null, $firstName);
+        writeAuditLog($pdo, $actingUserId, 'users', $newUserId, 'CREATE', 'last_name', null, $lastName);
+        writeAuditLog($pdo, $actingUserId, 'users', $newUserId, 'CREATE', 'role', null, $selectedRole);
+
+        $pdo->commit();
 
         setFlash('User created successfully.', 'success');
         header('Location: manage_users.php');
         exit;
-    } catch (PDOException $e) {
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
         setFlash('Error creating user.', 'error');
         header('Location: manage_users.php');
         exit;
@@ -285,7 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         exit;
     }
 
-    $deleteUserId = isset($_POST['delete_user_id']) ? (int)$_POST['delete_user_id'] : 0;
+    $deleteUserId = isset($_POST['delete_user_id']) ? (int) $_POST['delete_user_id'] : 0;
 
     if ($deleteUserId <= 0) {
         setFlash('Invalid user selected.', 'error');
@@ -293,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         exit;
     }
 
-    if ($deleteUserId === (int)$_SESSION['user_id']) {
+    if ($deleteUserId === (int) $_SESSION['user_id']) {
         setFlash('You cannot delete your own currently logged-in account.', 'error');
         header('Location: manage_users.php');
         exit;
@@ -307,7 +275,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
             LIMIT 1
         ");
         $userStmt->execute([':user_id' => $deleteUserId]);
-        $userToDelete = $userStmt->fetch();
+        $userToDelete = $userStmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$userToDelete) {
             setFlash('User not found.', 'error');
@@ -315,22 +283,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
             exit;
         }
 
-        $deleteStmt = $pdo->prepare("DELETE FROM users WHERE user_id = :user_id");
+        $pdo->beginTransaction();
+
+        $deleteStmt = $pdo->prepare("
+            DELETE FROM users
+            WHERE user_id = :user_id
+        ");
         $deleteStmt->execute([':user_id' => $deleteUserId]);
 
-        writeAuditLog(
-            $pdo,
-            (int)$_SESSION['user_id'],
-            'DELETE_USER',
-            'users',
-            "Deleted user_id={$userToDelete['user_id']}, email={$userToDelete['email']}, first_name={$userToDelete['first_name']}, last_name={$userToDelete['last_name']}, role={$userToDelete['role']}",
-            null
-        );
+        $actingUserId = (int) $_SESSION['user_id'];
+
+        writeAuditLog($pdo, $actingUserId, 'users', $deleteUserId, 'DELETE', 'email', (string) $userToDelete['email'], null);
+        writeAuditLog($pdo, $actingUserId, 'users', $deleteUserId, 'DELETE', 'first_name', (string) $userToDelete['first_name'], null);
+        writeAuditLog($pdo, $actingUserId, 'users', $deleteUserId, 'DELETE', 'last_name', (string) $userToDelete['last_name'], null);
+        writeAuditLog($pdo, $actingUserId, 'users', $deleteUserId, 'DELETE', 'role', (string) $userToDelete['role'], null);
+
+        $pdo->commit();
 
         setFlash('User deleted successfully.', 'success');
         header('Location: manage_users.php');
         exit;
-    } catch (PDOException $e) {
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
         setFlash('Error deleting user.', 'error');
         header('Location: manage_users.php');
         exit;
@@ -347,7 +324,7 @@ $usersStmt = $pdo->query("
     FROM users
     ORDER BY created_at DESC, user_id DESC
 ");
-$users = $usersStmt->fetchAll();
+$users = $usersStmt->fetchAll(PDO::FETCH_ASSOC);
 
 $flash = getFlash();
 ?>
@@ -362,144 +339,157 @@ $flash = getFlash();
             box-sizing: border-box;
         }
 
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
 
-.container {
-    max-width: 1000px;
-    margin: 50px auto;
-    padding: 0 15px;
-}
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 15px;
+        }
 
-.section-card {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
-    margin-bottom: 25px;
-}
+        .section-card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+            margin-bottom: 25px;
+        }
 
-h1, h2 {
-    margin-top: 0;
-}
+        h1,
+        h2 {
+            margin-top: 0;
+        }
 
-.top-bar {
-    margin-bottom: 20px;
-}
+        .section-title {
+            margin-bottom: 12px;
+        }
 
-.btn,
-button {
-    display: inline-block;
-    text-decoration: none;
-    background: #222;
-    color: #fff;
-    padding: 12px 18px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
+        .top-bar {
+            margin-bottom: 20px;
+        }
 
-.btn:hover,
-button:hover {
-    background: #444;
-}
+        .btn,
+        button {
+            display: inline-block;
+            text-decoration: none;
+            background: #222;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
 
-.delete-btn {
-    background: #b00020;
-    padding: 10px 14px;
-}
+        .btn:hover,
+        button:hover {
+            background: #444;
+        }
 
-.delete-btn:hover {
-    background: #d32f2f;
-}
+        .delete-btn {
+            background: #b00020;
+            width: 100%;
+            margin-top: 12px;
+        }
 
-.flash {
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: bold;
-}
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
 
-.flash.success {
-    background: #e6f4ea;
-    color: #2e7d32;
-}
+        .flash {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
 
-.flash.error {
-    background: #fdecea;
-    color: #b71c1c;
-}
+        .flash.success {
+            background: #e6f4ea;
+            color: #2e7d32;
+        }
 
-form.user-form {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-}
+        .flash.error {
+            background: #fdecea;
+            color: #b71c1c;
+        }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
+        form.user-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
 
-.form-group.full-width {
-    grid-column: 1 / -1;
-}
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
 
-label {
-    margin-bottom: 5px;
-    font-weight: bold;
-}
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
 
-input,
-select {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
-.users-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-}
+        input,
+        select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
 
-.user-card {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 15px;
-}
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
 
-.user-email {
-    font-weight: bold;
-    margin-bottom: 8px;
-}
+        .user-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+        }
 
-.user-role {
-    display: inline-block;
-    margin-top: 6px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: #222;
-    color: #fff;
-    font-size: 12px;
-}
+        .user-email {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
 
-.user-detail {
-    font-size: 14px;
-    margin-bottom: 4px;
-}
+        .user-role {
+            display: inline-block;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #222;
+            color: #fff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
 
-.meta {
-    font-size: 12px;
-    color: #777;
-}
+        .user-detail {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .meta {
+            font-size: 12px;
+            color: #777;
+            margin-top: 10px;
+        }
 
         @media (max-width: 768px) {
             form.user-form {
@@ -511,12 +501,12 @@ select {
 <body>
     <div class="container">
         <div class="top-bar">
-            <a class="btn btn-primary" href="AdminDashboard.php">← Admin Dashboard</a>
+            <a class="btn" href="AdminDashboard.php">← Admin Dashboard</a>
         </div>
 
         <?php if ($flash): ?>
-            <div class="flash <?php echo htmlspecialchars($flash['type']); ?>">
-                <?php echo htmlspecialchars($flash['message']); ?>
+            <div class="flash <?= htmlspecialchars($flash['type'], ENT_QUOTES, 'UTF-8') ?>">
+                <?= htmlspecialchars($flash['message'], ENT_QUOTES, 'UTF-8') ?>
             </div>
         <?php endif; ?>
 
@@ -530,7 +520,7 @@ select {
 
             <form class="user-form" method="POST" action="manage_users.php" autocomplete="off">
                 <input type="hidden" name="action" value="create_user">
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
 
                 <div class="form-group full-width">
                     <label for="email">Email</label>
@@ -584,13 +574,13 @@ select {
                     <label for="role">Role</label>
                     <select id="role" name="role" required>
                         <option value="">Select a role</option>
-                        <option value="superadmin">superadmin</option>
-                        <option value="admin">admin</option>
+                        <option value="admin">Admin</option>
+                        <option value="superadmin">Superadmin</option>
                     </select>
                 </div>
 
                 <div class="form-group full-width">
-                    <button type="submit" class="btn btn-success">Save User</button>
+                    <button type="submit">Save User</button>
                 </div>
             </form>
         </div>
@@ -599,58 +589,38 @@ select {
             <h2 class="section-title">All Users</h2>
 
             <?php if (empty($users)): ?>
-                <p class="empty-state">No users found.</p>
+                <p>No users found.</p>
             <?php else: ?>
                 <div class="users-grid">
                     <?php foreach ($users as $user): ?>
                         <div class="user-card">
-                            <div class="user-card-header">
-                                <div>
-                                    <div class="user-email">
-                                        <?php echo htmlspecialchars($user['email']); ?>
-                                    </div>
-                                    <div class="meta">
-                                        User ID: <?php echo (int)$user['user_id']; ?>
-                                    </div>
-                                </div>
-
-                                <?php if ((int)$user['user_id'] !== (int)$_SESSION['user_id']): ?>
-                                    <form method="POST" action="manage_users.php" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                        <input type="hidden" name="action" value="delete_user">
-                                        <input type="hidden" name="delete_user_id" value="<?php echo (int)$user['user_id']; ?>">
-                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-                                        <button type="submit" class="delete-btn" title="Delete User" aria-label="Delete User">🗑</button>
-                                    </form>
-                                <?php endif; ?>
+                            <div class="user-email">
+                                <?= htmlspecialchars((string) $user['email'], ENT_QUOTES, 'UTF-8') ?>
                             </div>
 
                             <div class="user-detail">
-                                <strong>First Name:</strong>
-                                <?php echo htmlspecialchars($user['first_name']); ?>
+                                <?= htmlspecialchars((string) $user['first_name'], ENT_QUOTES, 'UTF-8') . ' ' . htmlspecialchars((string) $user['last_name'], ENT_QUOTES, 'UTF-8') ?>
                             </div>
 
-                            <div class="user-detail">
-                                <strong>Last Name:</strong>
-                                <?php echo htmlspecialchars($user['last_name']); ?>
+                            <div class="user-role">
+                                <?= htmlspecialchars((string) $user['role'], ENT_QUOTES, 'UTF-8') ?>
                             </div>
 
-                            <div class="user-detail">
-                                <strong>Role:</strong><br>
-                                <span class="user-role"><?php echo htmlspecialchars($user['role']); ?></span>
+                            <div class="meta">
+                                ID: <?= (int) $user['user_id'] ?><br>
+                                Created: <?= htmlspecialchars((string) $user['created_at'], ENT_QUOTES, 'UTF-8') ?><br>
+                                Updated: <?= htmlspecialchars((string) $user['updated_at'], ENT_QUOTES, 'UTF-8') ?>
                             </div>
 
-                            <div class="user-detail">
-                                <strong>Created:</strong>
-                                <?php echo htmlspecialchars((string)$user['created_at']); ?>
-                            </div>
-
-                            <div class="user-detail">
-                                <strong>Updated:</strong>
-                                <?php echo htmlspecialchars((string)$user['updated_at']); ?>
-                            </div>
-
-                            <?php if ((int)$user['user_id'] === (int)$_SESSION['user_id']): ?>
-                                <div class="meta">You are currently logged in as this user.</div>
+                            <?php if ((int) $user['user_id'] !== (int) $_SESSION['user_id']): ?>
+                                <form method="POST" action="manage_users.php" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                    <input type="hidden" name="action" value="delete_user">
+                                    <input type="hidden" name="delete_user_id" value="<?= (int) $user['user_id'] ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <button type="submit" class="delete-btn">Delete User</button>
+                                </form>
+                            <?php else: ?>
+                                <div class="meta">Current logged-in account</div>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
