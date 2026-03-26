@@ -113,6 +113,11 @@ function getUploadDirectory(): string
     return __DIR__ . '/assets/images/seasonal/';
 }
 
+function getRelativeImageDirectory(): string
+{
+    return 'assets/images/seasonal/';
+}
+
 function ensureUploadDirectoryExists(): void
 {
     $dir = getUploadDirectory();
@@ -176,16 +181,18 @@ function processUploadedImage(array $file, ?string $existingImagePath = null): a
     ensureUploadDirectoryExists();
 
     $uploadDir = getUploadDirectory();
+    $relativeDir = getRelativeImageDirectory();
     $sanitizedName = sanitizeFileName($file['name']);
     $targetPath = $uploadDir . $sanitizedName;
-    $relativePath = 'assets/images/seasonal/' . $sanitizedName;
+    $relativePath = $relativeDir . $sanitizedName;
 
     $existingBaseName = $existingImagePath ? basename($existingImagePath) : null;
 
     if (file_exists($targetPath)) {
         if ($existingBaseName !== null && $existingBaseName === $sanitizedName) {
-            if (is_file(__DIR__ . '/' . $existingImagePath)) {
-                @unlink(__DIR__ . '/' . $existingImagePath);
+            $existingFullPath = __DIR__ . '/' . ltrim($existingImagePath, '/');
+            if (is_file($existingFullPath)) {
+                @unlink($existingFullPath);
             }
         } else {
             return [false, $existingImagePath, 'An image with that file name already exists. Please rename the file and try again.'];
@@ -197,13 +204,24 @@ function processUploadedImage(array $file, ?string $existingImagePath = null): a
     }
 
     if ($existingImagePath !== null && $existingImagePath !== '' && $existingImagePath !== $relativePath) {
-        $oldFullPath = __DIR__ . '/' . $existingImagePath;
+        $oldFullPath = __DIR__ . '/' . ltrim($existingImagePath, '/');
         if (is_file($oldFullPath)) {
             @unlink($oldFullPath);
         }
     }
 
     return [true, $relativePath, null];
+}
+
+function getBulkUploadedFileForId(array $files, int $seasonalSpecialId): array
+{
+    return [
+        'name' => $files['name'][$seasonalSpecialId] ?? '',
+        'type' => $files['type'][$seasonalSpecialId] ?? '',
+        'tmp_name' => $files['tmp_name'][$seasonalSpecialId] ?? '',
+        'error' => $files['error'][$seasonalSpecialId] ?? UPLOAD_ERR_NO_FILE,
+        'size' => $files['size'][$seasonalSpecialId] ?? 0,
+    ];
 }
 
 /*
@@ -280,122 +298,149 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'creat
 
 /*
 |--------------------------------------------------------------------------
-| HANDLE UPDATE SEASONAL SPECIAL
+| HANDLE BULK UPDATE SEASONAL SPECIALS
 |--------------------------------------------------------------------------
 */
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'update_seasonal_special') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'bulk_update_seasonal_specials') {
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
         setFlash('Invalid request token.', 'error');
         header('Location: manage_seasonal_menu.php');
         exit;
     }
 
-    $seasonalSpecialId = (int)($_POST['seasonal_special_id'] ?? 0);
-    $headerText = trim($_POST['header_text'] ?? '');
-    $description = trim($_POST['description'] ?? '');
-    $removeImage = isset($_POST['remove_image']) ? 1 : 0;
+    $seasonalSpecialIds = $_POST['seasonal_special_id'] ?? [];
 
-    if ($seasonalSpecialId <= 0) {
-        setFlash('Invalid seasonal special.', 'error');
+    if (!is_array($seasonalSpecialIds) || empty($seasonalSpecialIds)) {
+        setFlash('No seasonal specials were submitted.', 'error');
         header('Location: manage_seasonal_menu.php');
         exit;
     }
 
-    if ($headerText === '' || $description === '') {
-        setFlash('Header text and description are required.', 'error');
-        header('Location: manage_seasonal_menu.php');
-        exit;
-    }
+    $actingUserId = (int)$_SESSION['user_id'];
+    $updatedItems = 0;
+    $changedFields = 0;
 
     try {
-        $stmt = $pdo->prepare("
-            SELECT seasonal_special_id, header_text, description, image_path
-            FROM seasonal_specials
-            WHERE seasonal_special_id = :seasonal_special_id
-            LIMIT 1
-        ");
-        $stmt->execute([':seasonal_special_id' => $seasonalSpecialId]);
-        $existing = $stmt->fetch();
+        $pdo->beginTransaction();
 
-        if (!$existing) {
-            setFlash('Seasonal special not found.', 'error');
-            header('Location: manage_seasonal_menu.php');
-            exit;
-        }
+        foreach ($seasonalSpecialIds as $rawId) {
+            $seasonalSpecialId = (int)$rawId;
 
-        $newImagePath = $existing['image_path'];
-
-        if ($removeImage && !empty($existing['image_path'])) {
-            $oldFullPath = __DIR__ . '/' . $existing['image_path'];
-            if (is_file($oldFullPath)) {
-                @unlink($oldFullPath);
+            if ($seasonalSpecialId <= 0) {
+                continue;
             }
-            $newImagePath = null;
-        }
 
-        if (isset($_FILES['image_path']) && ($_FILES['image_path']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
-            [$success, $processedPath, $error] = processUploadedImage($_FILES['image_path'], $existing['image_path'] ?: null);
-            if (!$success) {
-                setFlash($error ?? 'Image upload failed.', 'error');
-                header('Location: manage_seasonal_menu.php');
-                exit;
+            $headerText = trim($_POST['header_text'][$seasonalSpecialId] ?? '');
+            $description = trim($_POST['description'][$seasonalSpecialId] ?? '');
+            $removeImage = isset($_POST['remove_image'][$seasonalSpecialId]);
+
+            if ($headerText === '' || $description === '') {
+                throw new RuntimeException('Header text and description are required for every seasonal special.');
             }
-            $newImagePath = $processedPath;
+
+            $stmt = $pdo->prepare("
+                SELECT seasonal_special_id, header_text, description, image_path
+                FROM seasonal_specials
+                WHERE seasonal_special_id = :seasonal_special_id
+                LIMIT 1
+            ");
+            $stmt->execute([':seasonal_special_id' => $seasonalSpecialId]);
+            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$existing) {
+                throw new RuntimeException('One or more seasonal specials could not be found.');
+            }
+
+            $newImagePath = $existing['image_path'] !== null ? (string)$existing['image_path'] : null;
+
+            if ($removeImage && $newImagePath !== null && $newImagePath !== '') {
+                $oldFullPath = __DIR__ . '/' . ltrim($newImagePath, '/');
+                if (is_file($oldFullPath)) {
+                    @unlink($oldFullPath);
+                }
+                $newImagePath = null;
+            }
+
+            if (isset($_FILES['image_path']) && is_array($_FILES['image_path']['name'] ?? null)) {
+                $uploadedFile = getBulkUploadedFileForId($_FILES['image_path'], $seasonalSpecialId);
+                if (($uploadedFile['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                    [$success, $processedPath, $error] = processUploadedImage($uploadedFile, $existing['image_path'] ?: null);
+                    if (!$success) {
+                        throw new RuntimeException($error ?? 'Image upload failed.');
+                    }
+                    $newImagePath = $processedPath;
+                }
+            }
+
+            $updateStmt = $pdo->prepare("
+                UPDATE seasonal_specials
+                SET
+                    header_text = :header_text,
+                    description = :description,
+                    image_path = :image_path,
+                    updated_at = NOW()
+                WHERE seasonal_special_id = :seasonal_special_id
+            ");
+
+            $updateStmt->execute([
+                ':header_text' => $headerText,
+                ':description' => $description,
+                ':image_path' => $newImagePath,
+                ':seasonal_special_id' => $seasonalSpecialId
+            ]);
+
+            $itemChanged = false;
+
+            if ((string)$existing['header_text'] !== $headerText) {
+                writeAuditLog($pdo, $actingUserId, 'seasonal_special', $seasonalSpecialId, 'UPDATE', 'header_text', (string)$existing['header_text'], $headerText);
+                $itemChanged = true;
+                $changedFields++;
+            }
+
+            if ((string)$existing['description'] !== $description) {
+                writeAuditLog($pdo, $actingUserId, 'seasonal_special', $seasonalSpecialId, 'UPDATE', 'description', (string)$existing['description'], $description);
+                $itemChanged = true;
+                $changedFields++;
+            }
+
+            if ((string)($existing['image_path'] ?? '') !== (string)($newImagePath ?? '')) {
+                writeAuditLog(
+                    $pdo,
+                    $actingUserId,
+                    'seasonal_special',
+                    $seasonalSpecialId,
+                    'UPDATE',
+                    'image_path',
+                    $existing['image_path'] ?: null,
+                    $newImagePath
+                );
+                $itemChanged = true;
+                $changedFields++;
+            }
+
+            if ($itemChanged) {
+                $updatedItems++;
+            }
         }
 
-        $updateStmt = $pdo->prepare("
-            UPDATE seasonal_specials
-            SET
-                header_text = :header_text,
-                description = :description,
-                image_path = :image_path,
-                updated_at = NOW()
-            WHERE seasonal_special_id = :seasonal_special_id
-        ");
+        $pdo->commit();
 
-        $updateStmt->execute([
-            ':header_text' => $headerText,
-            ':description' => $description,
-            ':image_path' => $newImagePath,
-            ':seasonal_special_id' => $seasonalSpecialId
-        ]);
-
-        $changed = false;
-
-        if ((string)$existing['header_text'] !== $headerText) {
-            writeAuditLog($pdo, (int)$_SESSION['user_id'], 'seasonal_special', $seasonalSpecialId, 'UPDATE', 'header_text', (string)$existing['header_text'], $headerText);
-            $changed = true;
-        }
-
-        if ((string)$existing['description'] !== $description) {
-            writeAuditLog($pdo, (int)$_SESSION['user_id'], 'seasonal_special', $seasonalSpecialId, 'UPDATE', 'description', (string)$existing['description'], $description);
-            $changed = true;
-        }
-
-        if ((string)($existing['image_path'] ?? '') !== (string)($newImagePath ?? '')) {
-            writeAuditLog(
-                $pdo,
-                (int)$_SESSION['user_id'],
-                'seasonal_special',
-                $seasonalSpecialId,
-                'UPDATE',
-                'image_path',
-                $existing['image_path'] ?: null,
-                $newImagePath
-            );
-            $changed = true;
-        }
-
-        if ($changed) {
-            setFlash('Seasonal special updated successfully.', 'success');
+        if ($updatedItems > 0) {
+            $itemLabel = $updatedItems === 1 ? 'item' : 'items';
+            $fieldLabel = $changedFields === 1 ? 'change' : 'changes';
+            setFlash("Saved {$changedFields} {$fieldLabel} across {$updatedItems} seasonal {$itemLabel}.", 'success');
         } else {
             setFlash('No changes were detected.', 'success');
         }
 
         header('Location: manage_seasonal_menu.php');
         exit;
-    } catch (PDOException $e) {
-        setFlash('Error updating seasonal special.', 'error');
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
+        setFlash($e instanceof RuntimeException ? $e->getMessage() : 'Error updating seasonal specials.', 'error');
         header('Location: manage_seasonal_menu.php');
         exit;
     }
@@ -438,7 +483,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         }
 
         if (!empty($existing['image_path'])) {
-            $oldFullPath = __DIR__ . '/' . $existing['image_path'];
+            $oldFullPath = __DIR__ . '/' . ltrim((string)$existing['image_path'], '/');
             if (is_file($oldFullPath)) {
                 @unlink($oldFullPath);
             }
@@ -563,6 +608,12 @@ $flash = getFlash();
             gap: 15px;
         }
 
+        .seasonal-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
         .form-group {
             display: flex;
             flex-direction: column;
@@ -657,6 +708,12 @@ $flash = getFlash();
             margin: 0;
         }
 
+        .bulk-save-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
         @media (max-width: 900px) {
             .seasonal-grid {
                 grid-template-columns: 1fr;
@@ -664,8 +721,17 @@ $flash = getFlash();
         }
 
         @media (max-width: 700px) {
-            form.seasonal-form {
+            form.seasonal-form,
+            .seasonal-form {
                 grid-template-columns: 1fr;
+            }
+
+            .bulk-save-bar {
+                justify-content: stretch;
+            }
+
+            .bulk-save-bar button {
+                width: 100%;
             }
         }
     </style>
@@ -722,27 +788,31 @@ $flash = getFlash();
         <?php if (empty($seasonalSpecials)): ?>
             <p>No seasonal specials found.</p>
         <?php else: ?>
+            <form id="bulk-update-form" method="POST" action="manage_seasonal_menu.php" enctype="multipart/form-data" style="display:none;">
+                <input type="hidden" name="action" value="bulk_update_seasonal_specials">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+            </form>
+
             <div class="seasonal-grid">
                 <?php foreach ($seasonalSpecials as $item): ?>
                     <div class="seasonal-item-card">
                         <div class="seasonal-image-wrap">
-                            <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . $item['image_path'])): ?>
-                                <img src="<?= htmlspecialchars('/' . ltrim($item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>" alt="Seasonal Special Image">
+                            <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string)$item['image_path'], '/'))): ?>
+                                <img src="<?= htmlspecialchars('/' . ltrim((string)$item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>" alt="Seasonal Special Image">
                             <?php else: ?>
                                 <div class="no-image">No Image</div>
                             <?php endif; ?>
                         </div>
 
-                        <form class="seasonal-form" method="POST" action="manage_seasonal_menu.php" enctype="multipart/form-data">
-                            <input type="hidden" name="action" value="update_seasonal_special">
-                            <input type="hidden" name="seasonal_special_id" value="<?= (int)$item['seasonal_special_id'] ?>">
-                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                        <div class="seasonal-form">
+                            <input type="hidden" form="bulk-update-form" name="seasonal_special_id[]" value="<?= (int)$item['seasonal_special_id'] ?>">
 
                             <div class="form-group full-width">
                                 <label>Header Text</label>
                                 <input
                                     type="text"
-                                    name="header_text"
+                                    form="bulk-update-form"
+                                    name="header_text[<?= (int)$item['seasonal_special_id'] ?>]"
                                     maxlength="255"
                                     value="<?= htmlspecialchars((string)$item['header_text'], ENT_QUOTES, 'UTF-8') ?>"
                                     required
@@ -751,21 +821,35 @@ $flash = getFlash();
 
                             <div class="form-group full-width">
                                 <label>Replace Image</label>
-                                <input type="file" name="image_path" accept=".png,.jpg,.jpeg,.gif">
+                                <input
+                                    type="file"
+                                    form="bulk-update-form"
+                                    name="image_path[<?= (int)$item['seasonal_special_id'] ?>]"
+                                    accept=".png,.jpg,.jpeg,.gif"
+                                >
                                 <div class="checkbox-row">
-                                    <input type="checkbox" name="remove_image" id="remove_image_<?= (int)$item['seasonal_special_id'] ?>">
+                                    <input
+                                        type="checkbox"
+                                        form="bulk-update-form"
+                                        name="remove_image[<?= (int)$item['seasonal_special_id'] ?>]"
+                                        id="remove_image_<?= (int)$item['seasonal_special_id'] ?>"
+                                    >
                                     <label for="remove_image_<?= (int)$item['seasonal_special_id'] ?>">Remove current image</label>
                                 </div>
                             </div>
 
                             <div class="form-group full-width">
                                 <label>Description</label>
-                                <textarea name="description" required><?= htmlspecialchars((string)$item['description'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                                <textarea
+                                    form="bulk-update-form"
+                                    name="description[<?= (int)$item['seasonal_special_id'] ?>]"
+                                    required
+                                ><?= htmlspecialchars((string)$item['description'], ENT_QUOTES, 'UTF-8') ?></textarea>
                             </div>
 
                             <div class="form-group full-width">
                                 <div class="seasonal-actions">
-                                    <button type="submit">Save Changes</button>
+                                    <button type="submit" form="bulk-update-form">Save Changes</button>
                                 </div>
                                 <div class="meta">
                                     ID: <?= (int)$item['seasonal_special_id'] ?> |
@@ -773,7 +857,7 @@ $flash = getFlash();
                                     Updated: <?= htmlspecialchars((string)$item['updated_at'], ENT_QUOTES, 'UTF-8') ?>
                                 </div>
                             </div>
-                        </form>
+                        </div>
 
                         <form method="POST" action="manage_seasonal_menu.php" onsubmit="return confirm('Are you sure you want to delete this seasonal special?');" style="margin-top: 10px;">
                             <input type="hidden" name="action" value="delete_seasonal_special">
@@ -783,6 +867,10 @@ $flash = getFlash();
                         </form>
                     </div>
                 <?php endforeach; ?>
+            </div>
+
+            <div class="bulk-save-bar">
+                <button type="submit" form="bulk-update-form">Save All Seasonal Changes</button>
             </div>
         <?php endif; ?>
     </div>
