@@ -164,97 +164,137 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if ($action === 'update') {
-        $id = (int) ($_POST['id'] ?? 0);
-        $name = trim($_POST['name'] ?? '');
-        $address = trim($_POST['address'] ?? '');
-        $beersSold = trim($_POST['beers_sold'] ?? '');
-        $latitude = trim($_POST['latitude'] ?? '');
-        $longitude = trim($_POST['longitude'] ?? '');
+    if ($action === 'bulk_update') {
+        $ids = $_POST['id'] ?? [];
 
-        if ($id <= 0) {
-            setFlash('Invalid map location.', 'error');
+        if (!is_array($ids) || empty($ids)) {
+            setFlash('No map locations were submitted.', 'error');
             header('Location: manage_map.php');
             exit;
         }
 
-        if ($name === '' || $address === '') {
-            setFlash('Name and address are required.', 'error');
-            header('Location: manage_map.php');
-            exit;
-        }
-
-        if ($latitude !== '' && !is_numeric($latitude)) {
-            setFlash('Latitude must be numeric.', 'error');
-            header('Location: manage_map.php');
-            exit;
-        }
-
-        if ($longitude !== '' && !is_numeric($longitude)) {
-            setFlash('Longitude must be numeric.', 'error');
-            header('Location: manage_map.php');
-            exit;
-        }
-
-        $latValue = $latitude === '' ? null : $latitude;
-        $lngValue = $longitude === '' ? null : $longitude;
+        $actingUserId = (int) $_SESSION['user_id'];
+        $updatedItems = 0;
+        $changedFields = 0;
 
         try {
-            $oldStmt = $pdo->prepare("SELECT * FROM map_locations WHERE map_location_id = ?");
-            $oldStmt->execute([$id]);
-            $old = $oldStmt->fetch();
+            $pdo->beginTransaction();
 
-            if (!$old) {
-                setFlash('Map location not found.', 'error');
-                header('Location: manage_map.php');
-                exit;
+            foreach ($ids as $rawId) {
+                $id = (int) $rawId;
+
+                if ($id <= 0) {
+                    continue;
+                }
+
+                $name = trim($_POST['name'][$id] ?? '');
+                $address = trim($_POST['address'][$id] ?? '');
+                $beersSold = trim($_POST['beers_sold'][$id] ?? '');
+                $latitude = trim($_POST['latitude'][$id] ?? '');
+                $longitude = trim($_POST['longitude'][$id] ?? '');
+
+                if ($name === '' || $address === '') {
+                    throw new RuntimeException('Name and address are required for every map location.');
+                }
+
+                if ($latitude !== '' && !is_numeric($latitude)) {
+                    throw new RuntimeException('Latitude must be numeric for every map location.');
+                }
+
+                if ($longitude !== '' && !is_numeric($longitude)) {
+                    throw new RuntimeException('Longitude must be numeric for every map location.');
+                }
+
+                $latValue = $latitude === '' ? null : $latitude;
+                $lngValue = $longitude === '' ? null : $longitude;
+                $beersSoldValue = $beersSold !== '' ? $beersSold : null;
+
+                $oldStmt = $pdo->prepare("
+                    SELECT *
+                    FROM map_locations
+                    WHERE map_location_id = :id
+                    LIMIT 1
+                ");
+                $oldStmt->execute([':id' => $id]);
+                $old = $oldStmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$old) {
+                    throw new RuntimeException('One or more map locations could not be found.');
+                }
+
+                $updateStmt = $pdo->prepare("
+                    UPDATE map_locations
+                    SET
+                        name = :name,
+                        address = :address,
+                        beers_sold = :beers_sold,
+                        latitude = :latitude,
+                        longitude = :longitude,
+                        updated_at = NOW()
+                    WHERE map_location_id = :id
+                ");
+
+                $updateStmt->bindValue(':name', $name, PDO::PARAM_STR);
+                $updateStmt->bindValue(':address', $address, PDO::PARAM_STR);
+                $updateStmt->bindValue(':beers_sold', $beersSoldValue, $beersSoldValue !== null ? PDO::PARAM_STR : PDO::PARAM_NULL);
+                $updateStmt->bindValue(':latitude', $latValue, $latValue !== null ? PDO::PARAM_STR : PDO::PARAM_NULL);
+                $updateStmt->bindValue(':longitude', $lngValue, $lngValue !== null ? PDO::PARAM_STR : PDO::PARAM_NULL);
+                $updateStmt->bindValue(':id', $id, PDO::PARAM_INT);
+                $updateStmt->execute();
+
+                $itemChanged = false;
+
+                if ((string) $old['name'] !== $name) {
+                    writeAuditLog($pdo, $actingUserId, 'map_location', $id, 'UPDATE', 'name', (string) $old['name'], $name);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ((string) $old['address'] !== $address) {
+                    writeAuditLog($pdo, $actingUserId, 'map_location', $id, 'UPDATE', 'address', (string) $old['address'], $address);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ((string) ($old['beers_sold'] ?? '') !== (string) ($beersSoldValue ?? '')) {
+                    writeAuditLog($pdo, $actingUserId, 'map_location', $id, 'UPDATE', 'beers_sold', $old['beers_sold'] ?: null, $beersSoldValue);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ((string) ($old['latitude'] ?? '') !== (string) ($latValue ?? '')) {
+                    writeAuditLog($pdo, $actingUserId, 'map_location', $id, 'UPDATE', 'latitude', $old['latitude'] !== null ? (string) $old['latitude'] : null, $latValue);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ((string) ($old['longitude'] ?? '') !== (string) ($lngValue ?? '')) {
+                    writeAuditLog($pdo, $actingUserId, 'map_location', $id, 'UPDATE', 'longitude', $old['longitude'] !== null ? (string) $old['longitude'] : null, $lngValue);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ($itemChanged) {
+                    $updatedItems++;
+                }
             }
 
-            $updateStmt = $pdo->prepare("
-                UPDATE map_locations
-                SET
-                    name = ?,
-                    address = ?,
-                    beers_sold = ?,
-                    latitude = ?,
-                    longitude = ?,
-                    updated_at = NOW()
-                WHERE map_location_id = ?
-            ");
+            $pdo->commit();
 
-            $updateStmt->execute([
-                $name,
-                $address,
-                $beersSold !== '' ? $beersSold : null,
-                $latValue,
-                $lngValue,
-                $id
-            ]);
-
-            if ((string) $old['name'] !== $name) {
-                writeAuditLog($pdo, (int) $_SESSION['user_id'], 'map_location', $id, 'UPDATE', 'name', (string) $old['name'], $name);
+            if ($updatedItems > 0) {
+                $itemLabel = $updatedItems === 1 ? 'item' : 'items';
+                $fieldLabel = $changedFields === 1 ? 'change' : 'changes';
+                setFlash("Saved {$changedFields} {$fieldLabel} across {$updatedItems} map {$itemLabel}.", 'success');
+            } else {
+                setFlash('No changes were detected.', 'success');
             }
-
-            if ((string) $old['address'] !== $address) {
-                writeAuditLog($pdo, (int) $_SESSION['user_id'], 'map_location', $id, 'UPDATE', 'address', (string) $old['address'], $address);
-            }
-
-            if ((string) ($old['beers_sold'] ?? '') !== $beersSold) {
-                writeAuditLog($pdo, (int) $_SESSION['user_id'], 'map_location', $id, 'UPDATE', 'beers_sold', $old['beers_sold'] ?: null, $beersSold !== '' ? $beersSold : null);
-            }
-
-            if ((string) ($old['latitude'] ?? '') !== (string) ($latValue ?? '')) {
-                writeAuditLog($pdo, (int) $_SESSION['user_id'], 'map_location', $id, 'UPDATE', 'latitude', $old['latitude'] !== null ? (string) $old['latitude'] : null, $latValue);
-            }
-
-            if ((string) ($old['longitude'] ?? '') !== (string) ($lngValue ?? '')) {
-                writeAuditLog($pdo, (int) $_SESSION['user_id'], 'map_location', $id, 'UPDATE', 'longitude', $old['longitude'] !== null ? (string) $old['longitude'] : null, $lngValue);
-            }
-
-            setFlash('Map location updated successfully.', 'success');
         } catch (Throwable $e) {
-            error_log('manage_map update failed: ' . $e->getMessage());
-            setFlash('Error updating map location.', 'error');
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            error_log('manage_map bulk update failed: ' . $e->getMessage());
+            setFlash($e instanceof RuntimeException ? $e->getMessage() : 'Error updating map locations.', 'error');
         }
 
         header('Location: manage_map.php');
@@ -392,6 +432,12 @@ $flash = getFlash();
             gap: 15px;
         }
 
+        .map-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
         .form-group {
             display: flex;
             flex-direction: column;
@@ -470,6 +516,12 @@ $flash = getFlash();
             flex-wrap: wrap;
         }
 
+        .bulk-save-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
         @media (max-width: 900px) {
             .map-grid {
                 grid-template-columns: 1fr;
@@ -477,8 +529,17 @@ $flash = getFlash();
         }
 
         @media (max-width: 700px) {
-            form.map-form {
+            form.map-form,
+            .map-form {
                 grid-template-columns: 1fr;
+            }
+
+            .bulk-save-bar {
+                justify-content: stretch;
+            }
+
+            .bulk-save-bar button {
+                width: 100%;
             }
         }
     </style>
@@ -544,6 +605,11 @@ $flash = getFlash();
         <?php if (empty($items)): ?>
             <p>No map locations found.</p>
         <?php else: ?>
+            <form id="bulk-update-form" method="POST" action="manage_map.php" style="display:none;">
+                <input type="hidden" name="action" value="bulk_update">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+            </form>
+
             <div class="map-grid">
                 <?php foreach ($items as $item): ?>
                     <div class="map-item-card">
@@ -555,39 +621,66 @@ $flash = getFlash();
                             <div class="preview-row"><strong>Longitude:</strong> <?= htmlspecialchars((string) ($item['longitude'] ?? 'Not set'), ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
 
-                        <form class="map-form" method="POST" action="manage_map.php">
-                            <input type="hidden" name="action" value="update">
-                            <input type="hidden" name="id" value="<?= (int) $item['map_location_id'] ?>">
-                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                        <div class="map-form">
+                            <input type="hidden" form="bulk-update-form" name="id[]" value="<?= (int) $item['map_location_id'] ?>">
 
                             <div class="form-group">
                                 <label>Location Name</label>
-                                <input type="text" name="name" maxlength="255" value="<?= htmlspecialchars((string) $item['name'], ENT_QUOTES, 'UTF-8') ?>" required>
+                                <input
+                                    type="text"
+                                    form="bulk-update-form"
+                                    name="name[<?= (int) $item['map_location_id'] ?>]"
+                                    maxlength="255"
+                                    value="<?= htmlspecialchars((string) $item['name'], ENT_QUOTES, 'UTF-8') ?>"
+                                    required
+                                >
                             </div>
 
                             <div class="form-group">
                                 <label>Address</label>
-                                <input type="text" name="address" maxlength="500" value="<?= htmlspecialchars((string) $item['address'], ENT_QUOTES, 'UTF-8') ?>" required>
+                                <input
+                                    type="text"
+                                    form="bulk-update-form"
+                                    name="address[<?= (int) $item['map_location_id'] ?>]"
+                                    maxlength="500"
+                                    value="<?= htmlspecialchars((string) $item['address'], ENT_QUOTES, 'UTF-8') ?>"
+                                    required
+                                >
                             </div>
 
                             <div class="form-group full-width">
                                 <label>Beers Sold at This Location</label>
-                                <textarea name="beers_sold"><?= htmlspecialchars((string) ($item['beers_sold'] ?? ''), ENT_QUOTES, 'UTF-8') ?></textarea>
+                                <textarea
+                                    form="bulk-update-form"
+                                    name="beers_sold[<?= (int) $item['map_location_id'] ?>]"
+                                ><?= htmlspecialchars((string) ($item['beers_sold'] ?? ''), ENT_QUOTES, 'UTF-8') ?></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label>Latitude</label>
-                                <input type="text" name="latitude" maxlength="50" value="<?= htmlspecialchars((string) ($item['latitude'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+                                <input
+                                    type="text"
+                                    form="bulk-update-form"
+                                    name="latitude[<?= (int) $item['map_location_id'] ?>]"
+                                    maxlength="50"
+                                    value="<?= htmlspecialchars((string) ($item['latitude'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+                                >
                             </div>
 
                             <div class="form-group">
                                 <label>Longitude</label>
-                                <input type="text" name="longitude" maxlength="50" value="<?= htmlspecialchars((string) ($item['longitude'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+                                <input
+                                    type="text"
+                                    form="bulk-update-form"
+                                    name="longitude[<?= (int) $item['map_location_id'] ?>]"
+                                    maxlength="50"
+                                    value="<?= htmlspecialchars((string) ($item['longitude'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+                                >
                             </div>
 
                             <div class="form-group full-width">
                                 <div class="map-actions">
-                                    <button type="submit">Save Changes</button>
+                                    <button type="submit" form="bulk-update-form">Save Changes</button>
                                 </div>
                                 <div class="meta">
                                     ID: <?= (int) $item['map_location_id'] ?> |
@@ -595,7 +688,7 @@ $flash = getFlash();
                                     Updated: <?= htmlspecialchars((string) $item['updated_at'], ENT_QUOTES, 'UTF-8') ?>
                                 </div>
                             </div>
-                        </form>
+                        </div>
 
                         <form method="POST" action="manage_map.php" onsubmit="return confirm('Are you sure you want to delete this map location?');" style="margin-top: 10px;">
                             <input type="hidden" name="action" value="delete">
@@ -605,6 +698,10 @@ $flash = getFlash();
                         </form>
                     </div>
                 <?php endforeach; ?>
+            </div>
+
+            <div class="bulk-save-bar">
+                <button type="submit" form="bulk-update-form">Save All Map Changes</button>
             </div>
         <?php endif; ?>
     </div>
