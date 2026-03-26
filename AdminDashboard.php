@@ -35,44 +35,23 @@ $email = $_SESSION['email'] ?? '';
 
 /*
 |--------------------------------------------------------------------------
-| Navigation by Role
+| Ordered Navigation (Matches Header Layout)
 |--------------------------------------------------------------------------
 */
-$commonLinks = [
-    [
-        'href' => 'manage_inventory.php',
-        'label' => 'Manage Inventory'
-    ],
-    [
-        'href' => 'manage_seasonal_menu.php',
-        'label' => 'Manage Seasonal Inventory'
-    ],
-    [
-        'href' => 'manage_map.php',
-        'label' => 'Manage Map'
-    ],
-    [
-        'href' => 'manage_merch.php',
-        'label' => 'Manage Merch'
-    ]
-];
+$visibleLinks = [];
 
-$superAdminOnlyLinks = [
-    [
-        'href' => 'audit_log.php',
-        'label' => 'Audit Log'
-    ],
-    [
-        'href' => 'manage_users.php',
-        'label' => 'Manage Users'
-    ]
-];
-
-$visibleLinks = $commonLinks;
-
+// Top Row
 if ($role === 'superadmin') {
-    $visibleLinks = array_merge($superAdminOnlyLinks, $commonLinks);
+    $visibleLinks[] = ['href' => 'audit_log.php', 'label' => 'Audit Log'];
+    $visibleLinks[] = ['href' => 'manage_users.php', 'label' => 'Manage Users'];
 }
+
+$visibleLinks[] = ['href' => 'manage_seasonal_menu.php', 'label' => 'Manage Seasonal Inventory'];
+
+// Bottom Row
+$visibleLinks[] = ['href' => 'manage_inventory.php', 'label' => 'Manage Inventory'];
+$visibleLinks[] = ['href' => 'manage_merch.php', 'label' => 'Manage Merch'];
+$visibleLinks[] = ['href' => 'manage_map.php', 'label' => 'Manage Map'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -121,7 +100,7 @@ if ($role === 'superadmin') {
 
         .links-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(3, 1fr); /* Force 3 columns */
             gap: 15px;
         }
 
@@ -153,6 +132,12 @@ if ($role === 'superadmin') {
 
         .logout a:hover {
             text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
