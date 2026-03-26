@@ -225,6 +225,17 @@ function processUploadedImage(array $file, ?string $existingImagePath = null): a
     return [true, $relativePath, null];
 }
 
+function getBulkUploadedFileForId(array $files, int $inventoryId): array
+{
+    return [
+        'name' => $files['name'][$inventoryId] ?? '',
+        'type' => $files['type'][$inventoryId] ?? '',
+        'tmp_name' => $files['tmp_name'][$inventoryId] ?? '',
+        'error' => $files['error'][$inventoryId] ?? UPLOAD_ERR_NO_FILE,
+        'size' => $files['size'][$inventoryId] ?? 0,
+    ];
+}
+
 /*
 |--------------------------------------------------------------------------
 | REQUEST HANDLERS
@@ -321,133 +332,158 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if ($action === 'update_inventory') {
-        $inventoryId = (int) ($_POST['inventory_id'] ?? 0);
-        $itemName = trim($_POST['item_name'] ?? '');
-        $abv = trim($_POST['abv'] ?? '');
-        $price = trim($_POST['price'] ?? '');
-        $description = trim($_POST['description'] ?? '');
-        $removeImage = isset($_POST['remove_image']);
+    if ($action === 'bulk_update_inventory') {
+        $inventoryIds = $_POST['inventory_id'] ?? [];
 
-        if ($inventoryId <= 0) {
-            setFlash('Invalid inventory item.', 'error');
+        if (!is_array($inventoryIds) || empty($inventoryIds)) {
+            setFlash('No inventory items were submitted.', 'error');
             header('Location: manage_inventory.php');
             exit;
         }
 
-        if ($itemName === '' || $abv === '' || $price === '' || $description === '') {
-            setFlash('All fields except image are required.', 'error');
-            header('Location: manage_inventory.php');
-            exit;
-        }
-
-        if (!is_numeric($abv) || !is_numeric($price)) {
-            setFlash('ABV and Price must be numeric values.', 'error');
-            header('Location: manage_inventory.php');
-            exit;
-        }
+        $actingUserId = (int) $_SESSION['user_id'];
+        $updatedItems = 0;
+        $changedFields = 0;
 
         try {
-            $stmt = $pdo->prepare("
-                SELECT inventory_id, item_name, abv, price, description, image_path
-                FROM inventory
-                WHERE inventory_id = :inventory_id
-                LIMIT 1
-            ");
-            $stmt->execute([':inventory_id' => $inventoryId]);
-            $existing = $stmt->fetch();
+            $pdo->beginTransaction();
 
-            if (!$existing) {
-                setFlash('Inventory item not found.', 'error');
-                header('Location: manage_inventory.php');
-                exit;
-            }
+            foreach ($inventoryIds as $rawId) {
+                $inventoryId = (int) $rawId;
 
-            $newImagePath = $existing['image_path'] !== null ? (string) $existing['image_path'] : null;
-
-            if ($removeImage && $newImagePath !== null && $newImagePath !== '') {
-                $oldFullPath = __DIR__ . '/' . ltrim($newImagePath, '/');
-                if (is_file($oldFullPath)) {
-                    @unlink($oldFullPath);
+                if ($inventoryId <= 0) {
+                    continue;
                 }
-                $newImagePath = null;
-            }
 
-            if (isset($_FILES['image_path']) && ($_FILES['image_path']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
-                [$success, $processedPath, $error] = processUploadedImage($_FILES['image_path'], $existing['image_path'] ?: null);
-                if (!$success) {
-                    setFlash($error ?? 'Image upload failed.', 'error');
-                    header('Location: manage_inventory.php');
-                    exit;
+                $itemName = trim($_POST['item_name'][$inventoryId] ?? '');
+                $abv = trim($_POST['abv'][$inventoryId] ?? '');
+                $price = trim($_POST['price'][$inventoryId] ?? '');
+                $description = trim($_POST['description'][$inventoryId] ?? '');
+                $removeImage = isset($_POST['remove_image'][$inventoryId]);
+
+                if ($itemName === '' || $abv === '' || $price === '' || $description === '') {
+                    throw new RuntimeException('All fields except image are required for every inventory item.');
                 }
-                $newImagePath = $processedPath;
+
+                if (!is_numeric($abv) || !is_numeric($price)) {
+                    throw new RuntimeException('ABV and Price must be numeric values for every inventory item.');
+                }
+
+                $stmt = $pdo->prepare("
+                    SELECT inventory_id, item_name, abv, price, description, image_path
+                    FROM inventory
+                    WHERE inventory_id = :inventory_id
+                    LIMIT 1
+                ");
+                $stmt->execute([':inventory_id' => $inventoryId]);
+                $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$existing) {
+                    throw new RuntimeException('One or more inventory items could not be found.');
+                }
+
+                $newImagePath = $existing['image_path'] !== null ? (string) $existing['image_path'] : null;
+
+                if ($removeImage && $newImagePath !== null && $newImagePath !== '') {
+                    $oldFullPath = __DIR__ . '/' . ltrim($newImagePath, '/');
+                    if (is_file($oldFullPath)) {
+                        @unlink($oldFullPath);
+                    }
+                    $newImagePath = null;
+                }
+
+                if (isset($_FILES['image_path']) && is_array($_FILES['image_path']['name'] ?? null)) {
+                    $uploadedFile = getBulkUploadedFileForId($_FILES['image_path'], $inventoryId);
+                    if (($uploadedFile['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                        [$success, $processedPath, $error] = processUploadedImage($uploadedFile, $existing['image_path'] ?: null);
+                        if (!$success) {
+                            throw new RuntimeException($error ?? 'Image upload failed.');
+                        }
+                        $newImagePath = $processedPath;
+                    }
+                }
+
+                $updateStmt = $pdo->prepare("
+                    UPDATE inventory
+                    SET
+                        item_name = :item_name,
+                        abv = :abv,
+                        price = :price,
+                        description = :description,
+                        image_path = :image_path,
+                        updated_at = NOW()
+                    WHERE inventory_id = :inventory_id
+                ");
+
+                $updateStmt->execute([
+                    ':item_name' => $itemName,
+                    ':abv' => $abv,
+                    ':price' => $price,
+                    ':description' => $description,
+                    ':image_path' => $newImagePath,
+                    ':inventory_id' => $inventoryId,
+                ]);
+
+                $itemChanged = false;
+
+                if ((string) $existing['item_name'] !== $itemName) {
+                    writeAuditLog($pdo, $actingUserId, 'inventory', $inventoryId, 'UPDATE', 'item_name', (string) $existing['item_name'], $itemName);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ((string) $existing['abv'] !== $abv) {
+                    writeAuditLog($pdo, $actingUserId, 'inventory', $inventoryId, 'UPDATE', 'abv', (string) $existing['abv'], $abv);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ((string) $existing['price'] !== $price) {
+                    writeAuditLog($pdo, $actingUserId, 'inventory', $inventoryId, 'UPDATE', 'price', (string) $existing['price'], $price);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ((string) $existing['description'] !== $description) {
+                    writeAuditLog($pdo, $actingUserId, 'inventory', $inventoryId, 'UPDATE', 'description', (string) $existing['description'], $description);
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ((string) ($existing['image_path'] ?? '') !== (string) ($newImagePath ?? '')) {
+                    writeAuditLog(
+                        $pdo,
+                        $actingUserId,
+                        'inventory',
+                        $inventoryId,
+                        'UPDATE',
+                        'image_path',
+                        $existing['image_path'] ?: null,
+                        $newImagePath
+                    );
+                    $itemChanged = true;
+                    $changedFields++;
+                }
+
+                if ($itemChanged) {
+                    $updatedItems++;
+                }
             }
 
-            $updateStmt = $pdo->prepare("
-                UPDATE inventory
-                SET
-                    item_name = :item_name,
-                    abv = :abv,
-                    price = :price,
-                    description = :description,
-                    image_path = :image_path,
-                    updated_at = NOW()
-                WHERE inventory_id = :inventory_id
-            ");
+            $pdo->commit();
 
-            $updateStmt->execute([
-                ':item_name' => $itemName,
-                ':abv' => $abv,
-                ':price' => $price,
-                ':description' => $description,
-                ':image_path' => $newImagePath,
-                ':inventory_id' => $inventoryId,
-            ]);
-
-            $actingUserId = (int) $_SESSION['user_id'];
-            $changed = false;
-
-            if ((string) $existing['item_name'] !== $itemName) {
-                writeAuditLog($pdo, $actingUserId, 'inventory', $inventoryId, 'UPDATE', 'item_name', (string) $existing['item_name'], $itemName);
-                $changed = true;
-            }
-
-            if ((string) $existing['abv'] !== $abv) {
-                writeAuditLog($pdo, $actingUserId, 'inventory', $inventoryId, 'UPDATE', 'abv', (string) $existing['abv'], $abv);
-                $changed = true;
-            }
-
-            if ((string) $existing['price'] !== $price) {
-                writeAuditLog($pdo, $actingUserId, 'inventory', $inventoryId, 'UPDATE', 'price', (string) $existing['price'], $price);
-                $changed = true;
-            }
-
-            if ((string) $existing['description'] !== $description) {
-                writeAuditLog($pdo, $actingUserId, 'inventory', $inventoryId, 'UPDATE', 'description', (string) $existing['description'], $description);
-                $changed = true;
-            }
-
-            if ((string) ($existing['image_path'] ?? '') !== (string) ($newImagePath ?? '')) {
-                writeAuditLog(
-                    $pdo,
-                    $actingUserId,
-                    'inventory',
-                    $inventoryId,
-                    'UPDATE',
-                    'image_path',
-                    $existing['image_path'] ?: null,
-                    $newImagePath
-                );
-                $changed = true;
-            }
-
-            if ($changed) {
-                setFlash('Inventory item updated successfully.', 'success');
+            if ($updatedItems > 0) {
+                $itemLabel = $updatedItems === 1 ? 'item' : 'items';
+                $fieldLabel = $changedFields === 1 ? 'change' : 'changes';
+                setFlash("Saved {$changedFields} {$fieldLabel} across {$updatedItems} inventory {$itemLabel}.", 'success');
             } else {
                 setFlash('No changes were detected.', 'success');
             }
-        } catch (PDOException $e) {
-            setFlash('Error updating inventory item.', 'error');
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            setFlash($e instanceof RuntimeException ? $e->getMessage() : 'Error updating inventory items.', 'error');
         }
 
         header('Location: manage_inventory.php');
@@ -471,7 +507,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 LIMIT 1
             ");
             $stmt->execute([':inventory_id' => $inventoryId]);
-            $existing = $stmt->fetch();
+            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$existing) {
                 setFlash('Inventory item not found.', 'error');
@@ -516,7 +552,7 @@ $inventoryStmt = $pdo->query("
     FROM inventory
     ORDER BY created_at DESC, inventory_id DESC
 ");
-$inventoryItems = $inventoryStmt->fetchAll();
+$inventoryItems = $inventoryStmt->fetchAll(PDO::FETCH_ASSOC);
 
 $flash = getFlash();
 ?>
@@ -702,6 +738,12 @@ $flash = getFlash();
             margin: 0;
         }
 
+        .bulk-save-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
         @media (max-width: 900px) {
             .inventory-grid {
                 grid-template-columns: 1fr;
@@ -711,6 +753,14 @@ $flash = getFlash();
         @media (max-width: 700px) {
             form.inventory-form {
                 grid-template-columns: 1fr;
+            }
+
+            .bulk-save-bar {
+                justify-content: stretch;
+            }
+
+            .bulk-save-bar button {
+                width: 100%;
             }
         }
     </style>
@@ -776,6 +826,11 @@ $flash = getFlash();
         <?php if (empty($inventoryItems)): ?>
             <p>No inventory items found.</p>
         <?php else: ?>
+            <form id="bulk-update-form" method="POST" action="manage_inventory.php" enctype="multipart/form-data" style="display:none;">
+                <input type="hidden" name="action" value="bulk_update_inventory">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+            </form>
+
             <div class="inventory-grid">
                 <?php foreach ($inventoryItems as $item): ?>
                     <div class="inventory-item-card">
@@ -787,43 +842,76 @@ $flash = getFlash();
                             <?php endif; ?>
                         </div>
 
-                        <form class="inventory-form" method="POST" action="manage_inventory.php" enctype="multipart/form-data">
-                            <input type="hidden" name="action" value="update_inventory">
-                            <input type="hidden" name="inventory_id" value="<?= (int) $item['inventory_id'] ?>">
-                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                        <div class="inventory-form">
+                            <input type="hidden" form="bulk-update-form" name="inventory_id[]" value="<?= (int) $item['inventory_id'] ?>">
 
                             <div class="form-group">
                                 <label>Item Name</label>
-                                <input type="text" name="item_name" maxlength="255" value="<?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?>" required>
+                                <input
+                                    type="text"
+                                    form="bulk-update-form"
+                                    name="item_name[<?= (int) $item['inventory_id'] ?>]"
+                                    maxlength="255"
+                                    value="<?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?>"
+                                    required
+                                >
                             </div>
 
                             <div class="form-group">
                                 <label>ABV</label>
-                                <input type="text" name="abv" maxlength="50" value="<?= htmlspecialchars((string) $item['abv'], ENT_QUOTES, 'UTF-8') ?>" required>
+                                <input
+                                    type="text"
+                                    form="bulk-update-form"
+                                    name="abv[<?= (int) $item['inventory_id'] ?>]"
+                                    maxlength="50"
+                                    value="<?= htmlspecialchars((string) $item['abv'], ENT_QUOTES, 'UTF-8') ?>"
+                                    required
+                                >
                             </div>
 
                             <div class="form-group">
                                 <label>Price</label>
-                                <input type="text" name="price" maxlength="50" value="<?= htmlspecialchars((string) $item['price'], ENT_QUOTES, 'UTF-8') ?>" required>
+                                <input
+                                    type="text"
+                                    form="bulk-update-form"
+                                    name="price[<?= (int) $item['inventory_id'] ?>]"
+                                    maxlength="50"
+                                    value="<?= htmlspecialchars((string) $item['price'], ENT_QUOTES, 'UTF-8') ?>"
+                                    required
+                                >
                             </div>
 
                             <div class="form-group">
                                 <label>Replace Image</label>
-                                <input type="file" name="image_path" accept=".png,.jpg,.jpeg,.gif">
+                                <input
+                                    type="file"
+                                    form="bulk-update-form"
+                                    name="image_path[<?= (int) $item['inventory_id'] ?>]"
+                                    accept=".png,.jpg,.jpeg,.gif"
+                                >
                                 <div class="checkbox-row">
-                                    <input type="checkbox" name="remove_image" id="remove_image_<?= (int) $item['inventory_id'] ?>">
+                                    <input
+                                        type="checkbox"
+                                        form="bulk-update-form"
+                                        name="remove_image[<?= (int) $item['inventory_id'] ?>]"
+                                        id="remove_image_<?= (int) $item['inventory_id'] ?>"
+                                    >
                                     <label for="remove_image_<?= (int) $item['inventory_id'] ?>">Remove current image</label>
                                 </div>
                             </div>
 
                             <div class="form-group full-width">
                                 <label>Description</label>
-                                <textarea name="description" required><?= htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                                <textarea
+                                    form="bulk-update-form"
+                                    name="description[<?= (int) $item['inventory_id'] ?>]"
+                                    required
+                                ><?= htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8') ?></textarea>
                             </div>
 
                             <div class="form-group full-width">
                                 <div class="inventory-actions">
-                                    <button type="submit">Save Changes</button>
+                                    <button type="submit" form="bulk-update-form">Save Changes</button>
                                 </div>
                                 <div class="meta">
                                     ID: <?= (int) $item['inventory_id'] ?> |
@@ -831,7 +919,7 @@ $flash = getFlash();
                                     Updated: <?= htmlspecialchars((string) $item['updated_at'], ENT_QUOTES, 'UTF-8') ?>
                                 </div>
                             </div>
-                        </form>
+                        </div>
 
                         <form method="POST" action="manage_inventory.php" onsubmit="return confirm('Are you sure you want to delete this inventory item?');" style="margin-top: 10px;">
                             <input type="hidden" name="action" value="delete_inventory">
@@ -841,6 +929,10 @@ $flash = getFlash();
                         </form>
                     </div>
                 <?php endforeach; ?>
+            </div>
+
+            <div class="bulk-save-bar">
+                <button type="submit" form="bulk-update-form">Save All Inventory Changes</button>
             </div>
         <?php endif; ?>
     </div>
