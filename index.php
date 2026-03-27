@@ -123,7 +123,7 @@ include 'header.php';
           </div>
 
           <div class="crew-card">
-            <div class="crew-card-image-tom" aria-hidden="true"></div>
+            <div class="crew-card-image-tomkoury" aria-hidden="true"></div>
             <h4>Tom Koury</h4>
             <p class="crew-card-role">Albertville Taproom Manager</p>
           </div>
