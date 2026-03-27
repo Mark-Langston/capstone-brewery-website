@@ -932,7 +932,7 @@ section {
 }
 
 .about-block-image {
-    min-height: 320px;
+    height: 320px;
     border-radius: 18px;
     background-position: center;
     background-size: cover;
