@@ -64,7 +64,7 @@ include 'header.php';
     </div>
 
     <div class="about-block about-block--split">
-      <div class="about-block-image" style="background-image: url('assets/Bright_Tanks_1.png');"></div>
+      <div class="about-block-image" style="background-image: url('assets/images/pages/Bright_Tanks.jpg');"></div>
       <div class="about-block-text">
         <h3>Crafted with Care, Served with Pride.</h3>
         <p>Every beer tells a tale. We combine meticulous brewing methods with locally inspired ingredients and bold, balanced profiles. Redefine expectations with every sip of our signature brews.</p>
