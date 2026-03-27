@@ -1009,7 +1009,7 @@ section {
 }
 
 .crew-card-image-clay {
-    background-image: url('assets/images/crew/clay-smith.jpg');
+    background-image: url('assets/images/crew/clay.png');
 }
 
 .crew-card-image-jeff {
@@ -1017,11 +1017,11 @@ section {
 }
 
 .crew-card-image-prentice {
-    background-image: url('assets/images/crew/prentice-satterfield.jpg');
+    background-image: url('assets/images/crew/prentice.jpg');
 }
 
 .crew-card-image-brian {
-    background-image: url('assets/images/crew/brian-satterfield.jpg');
+    background-image: url('assets/images/crew/brian.jpg');
 }
 
 .crew-card-image-tyke {
@@ -1029,11 +1029,11 @@ section {
 }
 
 .crew-card-image-drew {
-    background-image: url('assets/images/crew/drew-martin.jpg');
+    background-image: url('assets/images/crew/drew.png');
 }
 
 .crew-card-image-tom {
-    background-image: url('assets/images/crew/tom-koury.jpg');
+    background-image: url('assets/images/crew/tomkoury.png');
 }
 
 .crew-card-image-aaliyah {
@@ -1041,7 +1041,7 @@ section {
 }
 
 .crew-card-image-leigh-ellen {
-    background-image: url('assets/images/crew/leigh-ellen-styke.jpg');
+    background-image: url('assets/images/crew/leigh-ellen.png');
 }
 
 .location-card address {
