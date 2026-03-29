@@ -351,9 +351,33 @@ include 'header.php';
     <div class="section-title">
       <h2 id="contact-heading">Contact Us</h2>
     </div>
+
     <div class="contact-block">
-      <p>Email: <a href="mailto:beer@mainchannelbrewing.com">beer@mainchannelbrewing.com</a></p>
-      <p>Guntersville: <a href="tel:+12569605070">(256) 960-5070</a> · Albertville: <a href="tel:+12566600335">(256) 660-0335</a></p>
+      <p>Email: 
+        <a href="mailto:beer@mainchannelbrewing.com">
+          beer@mainchannelbrewing.com
+        </a>
+      </p>
+
+      <div class="contact-locations">
+
+        <div class="contact-location">
+          <h3>Guntersville Location</h3>
+          <p>
+            <a href="tel:+12569605070">(256) 960-5070</a><br>
+            2090 Gunter Ave, Guntersville, AL
+          </p>
+        </div>
+
+        <div class="contact-location">
+          <h3>Albertville Location</h3>
+          <p>
+            <a href="tel:+12566600335">(256) 660-0335</a><br>
+            210 Sand Mountain Dr, Albertville, AL
+          </p>
+        </div>
+
+      </div>
     </div>
   </div>
 </section>
