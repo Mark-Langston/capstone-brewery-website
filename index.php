@@ -362,7 +362,7 @@ include 'header.php';
       <div class="contact-locations">
 
         <div class="contact-location">
-          <h3>Guntersville Location</h3>
+          <h3>Guntersville - Our Original Location</h3>
           <p>
             <a href="tel:+12569605070">(256) 960-5070</a><br>
             2090 Gunter Ave, Guntersville, AL
@@ -370,7 +370,7 @@ include 'header.php';
         </div>
 
         <div class="contact-location">
-          <h3>Albertville Location</h3>
+          <h3>Albertville - Our Second Location</h3>
           <p>
             <a href="tel:+12566600335">(256) 660-0335</a><br>
             210 Sand Mountain Dr, Albertville, AL
