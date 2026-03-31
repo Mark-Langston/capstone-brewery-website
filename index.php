@@ -24,6 +24,15 @@ $merchStmt = $pdo->query("
 ");
 $merchItems = $merchStmt->fetchAll();
 
+$mapStmt = $pdo->query("
+    SELECT map_location_id, name, address, beers_sold, latitude, longitude
+    FROM map_locations
+    WHERE latitude IS NOT NULL
+      AND longitude IS NOT NULL
+    ORDER BY name ASC, map_location_id ASC
+");
+$mapLocations = $mapStmt->fetchAll();
+
 include 'header.php';
 ?>
 
@@ -337,30 +346,57 @@ include 'header.php';
 </section>
 
 <section id="locations" aria-labelledby="locations-heading">
-  <div class="container">
+  <div class="container map-section-container">
     <div class="section-title">
-      <h2 id="locations-heading">Locations</h2>
-      <p class="section-subtitle">A location finder or map experience can be added here next.</p>
-    </div>
-
-    <div class="locations-grid">
-      <div class="location-card interactive-card" tabindex="0">
-        <h3>Guntersville</h3>
-        <p>This placeholder can become a detailed taproom card, including hours, address, phone number, and map integration.</p>
-      </div>
-
-      <div class="location-card interactive-card" tabindex="0">
-        <h3>Albertville</h3>
-        <p>This placeholder can also support future business partner locations, store availability, or interactive location pins.</p>
-      </div>
-    </div>
-
-    <div class="upcoming-events interactive-card" tabindex="0">
-      <h3>Future Enhancement</h3>
-      <p>
-        This section is reserved for a map, business locations carrying Main Channel Brewing products,
-        or a taproom finder experience once the team is ready to implement it.
+      <h2 id="locations-heading">Find Our Beer</h2>
+      <p class="section-subtitle">
+        Browse locations that carry Main Channel Brewing beers. Select a location in the list or choose a marker on the map for details.
       </p>
+    </div>
+
+    <div class="map-section-card interactive-card">
+      <div class="map-layout">
+        <div
+          id="breweryMap"
+          class="brewery-map"
+          role="region"
+          aria-label="Interactive map of locations carrying Main Channel Brewing beers"
+        ></div>
+
+        <aside class="locations-panel interactive-card" aria-labelledby="locations-list-heading">
+          <h3 id="locations-list-heading">Locations</h3>
+
+          <?php if (empty($mapLocations)): ?>
+            <p class="empty-state">No mapped locations are available yet.</p>
+          <?php else: ?>
+            <ul class="location-list">
+              <?php foreach ($mapLocations as $location): ?>
+                <li>
+                  <button
+                    type="button"
+                    class="location-button"
+                    data-location-id="<?= (int) $location['map_location_id'] ?>"
+                  >
+                    <span class="location-name">
+                      <?= htmlspecialchars((string) $location['name'], ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+
+                    <span class="location-address">
+                      <?= htmlspecialchars((string) $location['address'], ENT_QUOTES, 'UTF-8') ?>
+                    </span>
+
+                    <?php if (!empty($location['beers_sold'])): ?>
+                      <span class="location-beers">
+                        Beers: <?= htmlspecialchars((string) $location['beers_sold'], ENT_QUOTES, 'UTF-8') ?>
+                      </span>
+                    <?php endif; ?>
+                  </button>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          <?php endif; ?>
+        </aside>
+      </div>
     </div>
   </div>
 </section>
@@ -669,4 +705,107 @@ include 'header.php';
 })();
 </script>
 
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+(function () {
+    const mapElement = document.getElementById('breweryMap');
+    if (!mapElement || typeof L === 'undefined') {
+        return;
+    }
+
+    const locations = <?php echo json_encode($mapLocations, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;
+    const map = L.map(mapElement);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const beerIcon = L.icon({
+        iconUrl: '/assets/images/map/beer_pin.png',
+        iconSize: [42, 42],
+        iconAnchor: [21, 42],
+        popupAnchor: [0, -38]
+    });
+
+    const bounds = [];
+    const markersById = {};
+
+    locations.forEach(function (loc) {
+        if (!loc.latitude || !loc.longitude) {
+            return;
+        }
+
+        const lat = parseFloat(loc.latitude);
+        const lng = parseFloat(loc.longitude);
+
+        if (Number.isNaN(lat) || Number.isNaN(lng)) {
+            return;
+        }
+
+        bounds.push([lat, lng]);
+
+        const popupBeers = loc.beers_sold
+            ? `<div class="popup-line"><strong>Beers:</strong> ${escapeHtml(loc.beers_sold)}</div>`
+            : '';
+
+        const popupHtml = `
+            <div class="popup-title">${escapeHtml(loc.name)}</div>
+            <div class="popup-line">${escapeHtml(loc.address)}</div>
+            ${popupBeers}
+        `;
+
+        const marker = L.marker([lat, lng], { icon: beerIcon })
+            .addTo(map)
+            .bindPopup(popupHtml);
+
+        markersById[String(loc.map_location_id)] = marker;
+    });
+
+    if (bounds.length === 1) {
+        map.setView(bounds[0], 13);
+    } else if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+    } else {
+        map.setView([34.3584, -86.2944], 10);
+    }
+
+    document.querySelectorAll('.location-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const locationId = button.getAttribute('data-location-id');
+            const marker = markersById[locationId];
+
+            document.querySelectorAll('.location-button').forEach(function (otherButton) {
+                otherButton.classList.remove('active');
+                otherButton.setAttribute('aria-pressed', 'false');
+            });
+
+            button.classList.add('active');
+            button.setAttribute('aria-pressed', 'true');
+
+            if (!marker) {
+                return;
+            }
+
+            map.setView(marker.getLatLng(), 15, { animate: true });
+            marker.openPopup();
+        });
+    });
+
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 150);
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+})();
+</script>
+
 <?php include 'footer.php'; ?>
+
