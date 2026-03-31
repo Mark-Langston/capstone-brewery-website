@@ -29,7 +29,7 @@ include 'header.php';
 
 <a href="#hero" class="skip-link">Skip to main content</a>
 
-<section class="hero" id="hero" style="background-image: url('assets/images/pages/Stage.jpg');">
+<section class="hero" id="hero" style="background-image: url('assets/images/pages/Stage.jpg');" role="img" aria-label="Main Channel Brewing stage and taproom">
   <div class="hero-overlay" aria-hidden="true"></div>
   <div class="hero-content">
     <h1>Crafting Flavors, Celebrating Community.</h1>
@@ -45,97 +45,113 @@ include 'header.php';
     </div>
 
     <div class="brews-pillars">
-      <div class="brews-pillar">
+      <div class="brews-pillar interactive-card" tabindex="0">
         <h4>Best ingredients</h4>
         <p>Sourced locally for unparalleled quality and freshness. Each sip tells a rich story of community and craftsmanship.</p>
       </div>
-      <div class="brews-pillar">
+      <div class="brews-pillar interactive-card" tabindex="0">
         <h4>Our Beers</h4>
         <p>Unique flavors, classic favorites, and exciting new adventures crafted with passion.</p>
       </div>
-      <div class="brews-pillar">
+      <div class="brews-pillar interactive-card" tabindex="0">
         <h4>Our process</h4>
         <p>Age-old traditions meet modern innovation to craft the perfect brew every time.</p>
       </div>
-      <div class="brews-pillar">
+      <div class="brews-pillar interactive-card" tabindex="0">
         <h4>Story behind</h4>
         <p>Every batch has a tale, deeply rooted in inspired beginnings and carefully crafted until the final pour.</p>
       </div>
     </div>
 
     <div class="about-block about-block--split">
-      <div class="about-block-image" style="background-image: url('assets/images/pages/Bright_Tanks.jpg');"></div>
-      <div class="about-block-text">
+      <div class="about-block-image" style="background-image: url('assets/images/pages/Bright_Tanks.jpg');" role="img" aria-label="Bright tanks inside the brewery"></div>
+      <div class="about-block-text interactive-card" tabindex="0">
         <h3>Crafted with Care, Served with Pride.</h3>
         <p>Every beer tells a tale. We combine meticulous brewing methods with locally inspired ingredients and bold, balanced profiles. Redefine expectations with every sip of our signature brews.</p>
         <a href="#locations" class="about-cta">Visit Our Locations</a>
       </div>
     </div>
 
-    <blockquote class="brewmaster">
+    <blockquote class="brewmaster interactive-card" tabindex="0">
       <p>I believe in beer that tells a story—a story of dedication and community. Each batch is a testament to our commitment to excellence and innovation in brewing.
           It's not just about the brew; it's about creating moments that bring people together. So, every sip you take is part of a larger narrative, one that I am proud to share with you.</p>
       <cite>— Tyke Jordan, Brew Master</cite>
     </blockquote>
 
-    <div class="about-block about-block--split about-block--reverse">
-      <div class="about-block-image" style="background-image: url('assets/capstonephoto6-4af5d255-0ac4-4d3b-ab76-d91984a51ce2.png');"></div>
-
-      <div class="about-block-text">
+    <div class="about-block about-block--full about-block--crew">
+      <div class="about-block-text interactive-card" tabindex="0">
         <h3>Meet the Crew</h3>
         <p>Discover the passionate team behind our exceptional craft beers.</p>
 
         <div class="crew-grid">
-          <div class="crew-card">
-            <div class="crew-card-image-clay" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/clay.png" alt="Clay Smith" loading="lazy">
+            </div>
             <h4>Clay Smith</h4>
             <p class="crew-card-role">Founder</p>
           </div>
 
-          <div class="crew-card">
-            <div class="crew-card-image-jeff" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/jeff-gossage.jpg" alt="Jeff Gossage" loading="lazy">
+            </div>
             <h4>Jeff Gossage</h4>
             <p class="crew-card-role">General Manager</p>
           </div>
 
-          <div class="crew-card">
-            <div class="crew-card-image-prentice" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/prentice.jpg" alt="Prentice Satterfield" loading="lazy">
+            </div>
             <h4>Prentice Satterfield</h4>
             <p class="crew-card-role">Sales Manager</p>
           </div>
 
-          <div class="crew-card">
-            <div class="crew-card-image-brian" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/brian.jpg" alt="Brian Satterfield" loading="lazy">
+            </div>
             <h4>Brian Satterfield</h4>
             <p class="crew-card-role">Cellar Operator</p>
           </div>
 
-          <div class="crew-card">
-            <div class="crew-card-image-tyke" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/tyke-jordan.jpg" alt="Tyke Jordan" loading="lazy">
+            </div>
             <h4>Tyke Jordan</h4>
             <p class="crew-card-role">Brew Master</p>
           </div>
 
-          <div class="crew-card">
-            <div class="crew-card-image-drew" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/drew.png" alt="Drew Martin" loading="lazy">
+            </div>
             <h4>Drew Martin</h4>
             <p class="crew-card-role">Guntersville Taproom Manager</p>
           </div>
 
-          <div class="crew-card">
-            <div class="crew-card-image-tomkoury" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/tomkoury.png" alt="Tom Koury" loading="lazy">
+            </div>
             <h4>Tom Koury</h4>
             <p class="crew-card-role">Albertville Taproom Manager</p>
           </div>
 
-          <div class="crew-card">
-            <div class="crew-card-image-aaliyah" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/aaliyah-bird.jpg" alt="Aaliyah Bird" loading="lazy">
+            </div>
             <h4>Aaliyah Bird</h4>
             <p class="crew-card-role">Albertville Taproom Assistant Manager</p>
           </div>
 
-          <div class="crew-card">
-            <div class="crew-card-image-leigh-ellen" aria-hidden="true"></div>
+          <div class="crew-card interactive-card" tabindex="0">
+            <div class="crew-card-image">
+              <img src="assets/images/crew/leigh-ellen.png" alt="Leigh Ellen Styke" loading="lazy">
+            </div>
             <h4>Leigh Ellen Styke</h4>
             <p class="crew-card-role">Event Coordinator, Bartender</p>
           </div>
@@ -156,12 +172,12 @@ include 'header.php';
     </div>
 
     <?php if (empty($seasonalSpecials)): ?>
-      <div class="seasonal-empty">
+      <div class="seasonal-empty interactive-card" tabindex="0">
         <h3>No seasonal specials are available right now.</h3>
         <p>Please check back again soon.</p>
       </div>
     <?php else: ?>
-      <div class="seasonal-carousel-shell">
+      <div class="seasonal-carousel-shell interactive-card">
         <button class="seasonal-carousel-arrow seasonal-carousel-arrow--prev" type="button" aria-label="Previous seasonal special">&#8249;</button>
         <button class="seasonal-carousel-arrow seasonal-carousel-arrow--next" type="button" aria-label="Next seasonal special">&#8250;</button>
 
@@ -175,15 +191,16 @@ include 'header.php';
                       <img
                         src="/<?= htmlspecialchars(ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
                         alt="<?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?>"
+                        loading="lazy"
                       >
                     <?php else: ?>
-                      <div class="seasonal-no-image">No Image Available</div>
+                      <div class="seasonal-no-image" aria-label="No image available for <?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?>">No Image Available</div>
                     <?php endif; ?>
                   </div>
                 </div>
 
                 <div class="seasonal-content-panel">
-                  <div class="seasonal-content-box">
+                  <div class="seasonal-content-box interactive-card" tabindex="0">
                     <h3><?= htmlspecialchars((string) $item['header_text'], ENT_QUOTES, 'UTF-8') ?></h3>
                     <p><?= nl2br(htmlspecialchars((string) $item['description'], ENT_QUOTES, 'UTF-8')) ?></p>
                   </div>
@@ -217,21 +234,22 @@ include 'header.php';
     </div>
 
     <?php if (empty($inventoryItems)): ?>
-      <div class="beer-menu-empty">
+      <div class="beer-menu-empty interactive-card" tabindex="0">
         <p>No beer menu items are available right now. Please check back soon.</p>
       </div>
     <?php else: ?>
       <div class="beer-menu-grid beer-menu-grid--homepage">
         <?php foreach ($inventoryItems as $item): ?>
-          <article class="beer-card">
+          <article class="beer-card interactive-card" tabindex="0" aria-expanded="false">
             <div class="beer-card-image">
               <?php if (!empty($item['image_path']) && is_file(__DIR__ . '/' . ltrim((string) $item['image_path'], '/'))): ?>
                 <img
                   src="<?= htmlspecialchars('/' . ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
                   alt="<?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?>"
+                  loading="lazy"
                 >
               <?php else: ?>
-                <div class="beer-card-no-image">No Image</div>
+                <div class="beer-card-no-image" aria-label="No image available for <?= htmlspecialchars((string) $item['item_name'], ENT_QUOTES, 'UTF-8') ?>">No Image</div>
               <?php endif; ?>
             </div>
 
@@ -262,12 +280,12 @@ include 'header.php';
     </div>
 
     <?php if (empty($merchItems)): ?>
-      <div class="merch-empty">
+      <div class="merch-empty interactive-card" tabindex="0">
         <h3>No merch items are available right now.</h3>
         <p>Please check back again soon.</p>
       </div>
     <?php else: ?>
-      <div class="carousel-shell">
+      <div class="carousel-shell interactive-card">
         <button class="carousel-arrow prev" type="button" aria-label="Previous merch item">&#8249;</button>
         <button class="carousel-arrow next" type="button" aria-label="Next merch item">&#8250;</button>
 
@@ -281,15 +299,16 @@ include 'header.php';
                       <img
                         src="/<?= htmlspecialchars(ltrim((string) $item['image_path'], '/'), ENT_QUOTES, 'UTF-8') ?>"
                         alt="<?= htmlspecialchars((string) $item['name'], ENT_QUOTES, 'UTF-8') ?>"
+                        loading="lazy"
                       >
                     <?php else: ?>
-                      <div class="merch-no-image">No Image Available</div>
+                      <div class="merch-no-image" aria-label="No image available for <?= htmlspecialchars((string) $item['name'], ENT_QUOTES, 'UTF-8') ?>">No Image Available</div>
                     <?php endif; ?>
                   </div>
                 </div>
 
                 <div class="merch-content-panel">
-                  <div class="merch-content-box">
+                  <div class="merch-content-box interactive-card" tabindex="0">
                     <h3><?= htmlspecialchars((string) $item['name'], ENT_QUOTES, 'UTF-8') ?></h3>
                     <p class="merch-price">$<?= htmlspecialchars(number_format((float) $item['price'], 2), ENT_QUOTES, 'UTF-8') ?></p>
                     <p class="merch-copy">
@@ -325,18 +344,18 @@ include 'header.php';
     </div>
 
     <div class="locations-grid">
-      <div class="location-card">
+      <div class="location-card interactive-card" tabindex="0">
         <h3>Guntersville</h3>
         <p>This placeholder can become a detailed taproom card, including hours, address, phone number, and map integration.</p>
       </div>
 
-      <div class="location-card">
+      <div class="location-card interactive-card" tabindex="0">
         <h3>Albertville</h3>
         <p>This placeholder can also support future business partner locations, store availability, or interactive location pins.</p>
       </div>
     </div>
 
-    <div class="upcoming-events">
+    <div class="upcoming-events interactive-card" tabindex="0">
       <h3>Future Enhancement</h3>
       <p>
         This section is reserved for a map, business locations carrying Main Channel Brewing products,
@@ -352,7 +371,7 @@ include 'header.php';
       <h2 id="contact-heading">Contact Us</h2>
     </div>
 
-    <div class="contact-block">
+    <div class="contact-block interactive-card" tabindex="0">
       <p>Email: 
         <a href="mailto:beer@mainchannelbrewing.com">
           beer@mainchannelbrewing.com
@@ -361,7 +380,7 @@ include 'header.php';
 
       <div class="contact-locations">
 
-        <div class="contact-location">
+        <div class="contact-location interactive-card" tabindex="0">
           <h3>Guntersville - Our Original Location</h3>
           <p>
             <a href="tel:+12569605070">(256) 960-5070</a><br>
@@ -369,7 +388,7 @@ include 'header.php';
           </p>
         </div>
 
-        <div class="contact-location">
+        <div class="contact-location interactive-card" tabindex="0">
           <h3>Albertville - Our Second Location</h3>
           <p>
             <a href="tel:+12566600335">(256) 660-0335</a><br>
@@ -558,7 +577,6 @@ include 'header.php';
 </script>
 <?php endif; ?>
 
-
 <script>
 (function () {
     const links = document.querySelectorAll('a[href^="#"]');
@@ -593,5 +611,62 @@ include 'header.php';
 })();
 </script>
 
+<script>
+(function () {
+    const beerCards = Array.from(document.querySelectorAll('.beer-card'));
+    const isTouchOrSmallScreen = window.matchMedia('(hover: none), (max-width: 860px)');
+
+    function collapseOthers(activeCard) {
+        beerCards.forEach(function (card) {
+            if (card !== activeCard) {
+                card.classList.remove('expanded');
+                card.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
+    beerCards.forEach(function (card) {
+        card.addEventListener('click', function () {
+            if (!isTouchOrSmallScreen.matches) {
+                return;
+            }
+
+            const isExpanded = card.classList.contains('expanded');
+            collapseOthers(card);
+            card.classList.toggle('expanded', !isExpanded);
+            card.setAttribute('aria-expanded', String(!isExpanded));
+        });
+
+        card.addEventListener('keydown', function (event) {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+                return;
+            }
+
+            event.preventDefault();
+
+            if (!isTouchOrSmallScreen.matches) {
+                return;
+            }
+
+            const isExpanded = card.classList.contains('expanded');
+            collapseOthers(card);
+            card.classList.toggle('expanded', !isExpanded);
+            card.setAttribute('aria-expanded', String(!isExpanded));
+        });
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!isTouchOrSmallScreen.matches) {
+            return;
+        }
+
+        if (event.target.closest('.beer-card')) {
+            return;
+        }
+
+        collapseOthers(null);
+    });
+})();
+</script>
 
 <?php include 'footer.php'; ?>
