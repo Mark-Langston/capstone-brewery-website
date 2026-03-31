@@ -1,3 +1,5 @@
+@import url('https://unpkg.com/leaflet/dist/leaflet.css');
+
 /* =========================================
    Main Channel Brewing
    Unified Single-Page Stylesheet
@@ -1085,6 +1087,136 @@ section {
     color: var(--accent-dark);
 }
 
+
+/* ---------- Map Section ---------- */
+.map-section-container {
+    max-width: 1300px;
+}
+
+.map-section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+}
+
+.map-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(280px, 0.9fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.brewery-map {
+    width: 100%;
+    min-height: 650px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    background: #f3efe9;
+}
+
+.locations-panel {
+    background: linear-gradient(180deg, #fffaf7 0%, #ffffff 100%);
+    border: 1px solid #ebd4c5;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    max-height: 650px;
+    overflow-y: auto;
+}
+
+.locations-panel h3 {
+    margin: 0 0 14px;
+    font-size: 1.25rem;
+}
+
+.location-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.location-list li + li {
+    margin-top: 12px;
+}
+
+.location-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 1px solid var(--border);
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 14px 15px;
+    cursor: pointer;
+    color: inherit;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease,
+        background-color 0.18s ease;
+}
+
+.location-button:hover,
+.location-button:focus-visible,
+.location-button.active {
+    background: #fff7f1;
+    border-color: #ddbda4;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.location-name {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.location-address,
+.location-beers {
+    display: block;
+    color: var(--text-soft);
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.location-beers {
+    margin-top: 4px;
+}
+
+.empty-state {
+    margin: 0;
+    color: var(--text-soft);
+    line-height: 1.6;
+}
+
+.leaflet-container a {
+    color: var(--accent-dark);
+}
+
+.leaflet-popup-content {
+    line-height: 1.5;
+    font-size: 0.94rem;
+}
+
+.popup-title {
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.popup-line {
+    margin-bottom: 4px;
+}
+
+.popup-line:last-child {
+    margin-bottom: 0;
+}
+
 /* ---------- Contact Details Layout ---------- */
 .contact-details {
     display: grid;
@@ -1217,7 +1349,8 @@ footer {
 
     .locations-grid,
     .about-block--split,
-    .about-block--reverse {
+    .about-block--reverse,
+    .map-layout {
         grid-template-columns: 1fr;
     }
 
@@ -1233,6 +1366,16 @@ footer {
 
     .seasonal-image-wrap img {
         max-height: 320px;
+    }
+
+    .brewery-map,
+    .locations-panel {
+        min-height: 0;
+        max-height: none;
+    }
+
+    .brewery-map {
+        height: 520px;
     }
 
     .merch-image-wrap img {
@@ -1422,6 +1565,20 @@ footer {
     .homepage-merch {
         padding: 56px 0 74px;
     }
+
+    .map-section-card {
+        padding: 18px;
+    }
+
+    .brewery-map {
+        height: 400px;
+        min-height: 400px;
+        border-radius: 14px;
+    }
+
+    .locations-panel {
+        padding: 16px;
+    }
 }
 
 @media (max-width: 520px) {
@@ -1462,6 +1619,15 @@ footer {
     .seasonal-content-box,
     .merch-content-box {
         padding: 18px 15px;
+    }
+
+    .map-section-card {
+        padding: 14px;
+    }
+
+    .brewery-map {
+        height: 340px;
+        min-height: 340px;
     }
 
     .seasonal-content-box h3,
