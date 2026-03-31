@@ -98,7 +98,8 @@ a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
-select:focus-visible {
+select:focus-visible,
+.interactive-card:focus-visible {
     outline: 3px solid rgba(215, 106, 43, 0.35);
     outline-offset: 3px;
     border-radius: 8px;
@@ -147,6 +148,31 @@ section {
     margin: 0 auto;
     color: var(--text-soft);
     font-size: 1rem;
+}
+
+/* ---------- Shared Interactive Treatment ---------- */
+.interactive-card {
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease,
+        background-color 0.22s ease;
+}
+
+.interactive-card:hover,
+.interactive-card:focus-visible,
+.interactive-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: #e1cab7;
+}
+
+@media (hover: none) {
+    .interactive-card:active {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: #e1cab7;
+    }
 }
 
 /* ---------- Fixed Header ---------- */
@@ -441,16 +467,18 @@ section {
     flex-direction: column;
     min-width: 0;
     height: 100%;
-    overflow: hidden;
+    overflow: visible;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 18px;
     box-shadow: var(--shadow-sm);
     transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    cursor: pointer;
 }
 
 .beer-card:hover,
-.beer-card:focus-within {
+.beer-card:focus-within,
+.beer-card.expanded {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
     border-color: #e1cab7;
@@ -464,12 +492,21 @@ section {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
 }
 
 .beer-card-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.28s ease;
+}
+
+.beer-card:hover .beer-card-image img,
+.beer-card:focus-within .beer-card-image img,
+.beer-card.expanded .beer-card-image img {
+    transform: scale(1.03);
 }
 
 .beer-card-no-image {
@@ -528,6 +565,22 @@ section {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    transition: max-height 0.28s ease, -webkit-line-clamp 0.28s ease;
+}
+
+@media (hover: hover) {
+    .beer-card:hover .beer-description,
+    .beer-card:focus-within .beer-description {
+        display: block;
+        -webkit-line-clamp: unset;
+        overflow: visible;
+    }
+}
+
+.beer-card.expanded .beer-description {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
 }
 
 /* ---------- Seasonal Specials ---------- */
@@ -883,7 +936,8 @@ section {
 
 .brews-pillars,
 .crew-grid,
-.locations-grid {
+.locations-grid,
+.contact-locations {
     display: grid;
     gap: 20px;
 }
@@ -921,6 +975,10 @@ section {
 
 .about-block--reverse {
     grid-template-columns: 1fr 1.1fr;
+}
+
+.about-block--full {
+    display: block;
 }
 
 .about-block--reverse .about-block-image {
@@ -961,9 +1019,14 @@ section {
     font-weight: 700;
 }
 
-.crew-grid,
-.locations-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+.crew-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 22px;
+}
+
+.locations-grid,
+.contact-locations {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .crew-card {
@@ -985,63 +1048,31 @@ section {
     line-height: 1.45;
     overflow-wrap: break-word;
     word-break: break-word;
+    margin: 0;
 }
 
-.crew-card-image,
-.crew-card-image-clay,
-.crew-card-image-jeff,
-.crew-card-image-prentice,
-.crew-card-image-brian,
-.crew-card-image-tyke,
-.crew-card-image-drew,
-.crew-card-image-tomkoury,
-.crew-card-image-aaliyah,
-.crew-card-image-leigh-ellen {
+.crew-card-image {
     width: 100%;
-    height: 180px;
+    height: 210px;
     margin-bottom: 12px;
     border-radius: 12px;
     background-color: #f0ece6;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    overflow: hidden;
     flex-shrink: 0;
 }
 
-.crew-card-image-clay {
-    background-image: url('assets/images/crew/clay.png');
+.crew-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.25s ease;
 }
 
-.crew-card-image-jeff {
-    background-image: url('assets/images/crew/jeff-gossage.jpg');
-}
-
-.crew-card-image-prentice {
-    background-image: url('assets/images/crew/prentice.jpg');
-}
-
-.crew-card-image-brian {
-    background-image: url('assets/images/crew/brian.jpg');
-}
-
-.crew-card-image-tyke {
-    background-image: url('assets/images/crew/tyke-jordan.jpg');
-}
-
-.crew-card-image-drew {
-    background-image: url('assets/images/crew/drew.png');
-}
-
-.crew-card-image-tomkoury {
-    background-image: url('assets/images/crew/tomkoury.png');
-}
-
-.crew-card-image-aaliyah {
-    background-image: url('assets/images/crew/aaliyah-bird.jpg');
-}
-
-.crew-card-image-leigh-ellen {
-    background-image: url('assets/images/crew/leigh-ellen.png');
+.crew-card:hover .crew-card-image img,
+.crew-card:focus-within .crew-card-image img,
+.crew-card:focus-visible .crew-card-image img {
+    transform: scale(1.05);
 }
 
 .location-card address {
@@ -1078,13 +1109,6 @@ section {
 .contact-location p {
     margin: 4px 0;
     font-size: 0.95rem;
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-    .contact-details {
-        grid-template-columns: 1fr;
-    }
 }
 
 .events-list {
@@ -1168,6 +1192,10 @@ footer {
     .social-nav {
         gap: 10px;
     }
+
+    .crew-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 1080px) {
@@ -1187,7 +1215,6 @@ footer {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .crew-grid,
     .locations-grid,
     .about-block--split,
     .about-block--reverse {
@@ -1315,6 +1342,10 @@ footer {
     .hero {
         min-height: 480px;
     }
+
+    .crew-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (min-width: 861px) {
@@ -1331,9 +1362,10 @@ footer {
     .beer-menu-grid--homepage,
     .homepage-beer-menu .beer-menu-grid,
     .brews-pillars,
-    .crew-grid,
     .locations-grid,
-    .beer-menu-page .beer-menu-grid {
+    .beer-menu-page .beer-menu-grid,
+    .contact-locations,
+    .contact-details {
         grid-template-columns: 1fr;
     }
 
@@ -1344,12 +1376,6 @@ footer {
     .beer-card-header {
         flex-direction: column;
         gap: 6px;
-    }
-
-    .beer-description {
-        display: block;
-        -webkit-line-clamp: unset;
-        overflow: visible;
     }
 
     .seasonal-carousel-shell,
@@ -1398,6 +1424,16 @@ footer {
     }
 }
 
+@media (max-width: 520px) {
+    .crew-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .crew-card-image {
+        height: 240px;
+    }
+}
+
 @media (max-width: 420px) {
     .hero {
         min-height: 400px;
@@ -1441,34 +1477,4 @@ footer {
     .merch-copy {
         font-size: 0.92rem;
     }
-}
-
-
-/* ---------- Crew Card Interactions ---------- */
-.crew-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.crew-card:hover,
-.crew-card:focus-within {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-md);
-}
-
-.crew-card-image,
-.crew-card-image-clay,
-.crew-card-image-jeff,
-.crew-card-image-prentice,
-.crew-card-image-brian,
-.crew-card-image-tyke,
-.crew-card-image-drew,
-.crew-card-image-tomkoury,
-.crew-card-image-aaliyah,
-.crew-card-image-leigh-ellen {
-    transition: transform 0.25s ease;
-}
-
-.crew-card:hover .crew-card-image,
-.crew-card:hover [class^="crew-card-image-"] {
-    transform: scale(1.05);
 }
