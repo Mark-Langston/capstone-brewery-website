@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon.png">
   <link rel="apple-touch-icon" href="/assets/images/favicon/favicon.png">
@@ -10,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Main Channel Brewing</title>
 
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
@@ -69,12 +68,25 @@
   </div>
 </header>
 
+<div id="age-gate" class="age-gate-overlay">
+    <div class="age-gate-content">
+        <img src="assets/images/logos/logo-white.png" alt="Main Channel Brewing" class="gate-logo" style="max-width: 150px; margin-bottom: 20px;">
+        <h2>Are you over 21 years old?</h2>
+        <p>You must be of legal drinking age to view this site.</p>
+        <div class="gate-buttons">
+            <button id="age-yes" class="gate-button">YES</button>
+            <button id="age-no" class="gate-button no">NO</button>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     const header = document.getElementById('siteHeader');
     const navToggle = document.getElementById('navToggle');
     const navLinks = Array.from(document.querySelectorAll('.main-nav a'));
 
+    // --- Navigation Logic ---
     function getSections() {
         return navLinks
             .map(function (link) {
@@ -145,6 +157,31 @@
 
     setActiveLink();
     window.addEventListener('scroll', setActiveLink, { passive: true });
+
+    // =========================================
+    // AGE GATE LOGIC
+    // =========================================
+    const ageGate = document.getElementById('age-gate');
+    const yesButton = document.getElementById('age-yes');
+    const noButton = document.getElementById('age-no');
+
+    if (ageGate) {
+        // 1. Check session
+        if (sessionStorage.getItem('age_verified') === 'true') {
+            ageGate.classList.add('hidden');
+        }
+
+        // 2. YES Click
+        yesButton.addEventListener('click', function() {
+            sessionStorage.setItem('age_verified', 'true');
+            ageGate.classList.add('hidden');
+        });
+
+        // 3. NO Click
+        noButton.addEventListener('click', function() {
+            window.location.href = "https://www.google.com";
+        });
+    }
 })();
 </script>
 
