@@ -32,7 +32,7 @@
       <p>You must be of legal drinking age to enter this website.</p>
 
       <div class="age-gate-buttons">
-        <button id="age-yes" type="button">Yes, I am 21+</button>
+        <button id="age-yes" type="button">Yes</button>
         <button id="age-no" type="button">No</button>
       </div>
     </div>
