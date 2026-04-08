@@ -416,20 +416,53 @@ include 'header.php';
 
       <div class="contact-locations">
 
+        <!-- Guntersville -->
         <div class="contact-location interactive-card" tabindex="0">
           <h3>Guntersville - Our Original Location</h3>
-          <p>
-            <a href="tel:+12569605070">(256) 960-5070</a><br>
-            2090 Gunter Ave, Guntersville, AL
+
+          <p class="contact-info">
+            <span class="address">
+              2090 Gunter Ave, Guntersville, AL
+            </span><br>
+            <span class="phone">
+              <a href="tel:+12569605070">(256) 960-5070</a>
+            </span>
           </p>
+
+          <div class="hours">
+            <strong>Hours:</strong>
+            <p>
+              Mon–Thu: 3PM – 9PM<br>
+              Fri: 3PM – 10PM<br>
+              Sat: 12PM – 10PM<br>
+              Sun: 12PM – 10PM
+            </p>
+          </div>
         </div>
 
+        <!-- Albertville -->
         <div class="contact-location interactive-card" tabindex="0">
           <h3>Albertville - Our Second Location</h3>
-          <p>
-            <a href="tel:+12566600335">(256) 660-0335</a><br>
-            210 Sand Mountain Dr, Albertville, AL
+
+          <p class="contact-info">
+            <span class="address">
+              210 Sand Mountain Dr, Albertville, AL
+            </span><br>
+            <span class="phone">
+              <a href="tel:+12566600335">(256) 660-0335</a>
+            </span>
           </p>
+
+          <div class="hours">
+            <strong>Hours:</strong>
+            <p>
+              Mon: 3PM – 9PM<br>
+              Tue–Thu: 11AM – 9PM<br>
+              Fri: 11AM – 10PM<br>
+              Sat: 12PM – 10PM<br>
+              Sun: Closed
+            </p>
+          </div>
         </div>
 
       </div>
