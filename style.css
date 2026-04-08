@@ -1327,6 +1327,20 @@ section {
     font-size: 0.95rem;
 }
 
+.contact-info {
+    margin: 8px 0;
+    line-height: 1.5;
+}
+
+.contact-info .address {
+    font-weight: 500;
+}
+
+.contact-info .phone a {
+    color: var(--accent-dark);
+    font-weight: 600;
+}
+
 .events-list {
     list-style-position: inside;
     padding-left: 0;
