@@ -16,6 +16,30 @@
 
 <body>
 
+<!-- Age Verification Popup -->
+<div id="age-gate" class="age-gate">
+  <div class="age-gate-content">
+
+    <div class="age-gate-logo">
+      <img
+        src="assets/images/logos/logo-white.png"
+        alt="Main Channel Brewing Logo"
+      >
+    </div>
+
+    <div class="age-gate-text">
+      <h2>Are You 21 or Older?</h2>
+      <p>You must be of legal drinking age to enter this website.</p>
+
+      <div class="age-gate-buttons">
+        <button id="age-yes" type="button">Yes, I am 21+</button>
+        <button id="age-no" type="button">No</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <header class="site-header" id="siteHeader">
   <div class="header-inner">
 
@@ -146,6 +170,27 @@
     setActiveLink();
     window.addEventListener('scroll', setActiveLink, { passive: true });
 })();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ageGate = document.getElementById("age-gate");
+    const yesBtn = document.getElementById("age-yes");
+    const noBtn = document.getElementById("age-no");
+
+    if (localStorage.getItem("ageVerified") === "true") {
+        ageGate.style.display = "none";
+    }
+
+    yesBtn.addEventListener("click", function () {
+        localStorage.setItem("ageVerified", "true");
+        ageGate.style.display = "none";
+    });
+
+    noBtn.addEventListener("click", function () {
+        window.location.href = "https://www.google.com";
+    });
+});
 </script>
 
 <main>
