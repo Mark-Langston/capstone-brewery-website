@@ -2,7 +2,10 @@
 
 <footer class="site-footer">
   <div class="container">
-    <p>&copy; <?php echo date("Y"); ?> Main Channel Brewing. All rights reserved.</p>
+    <div class="footer-legal">
+      <p class="responsibility-msg">PLEASE DRINK RESPONSIBLY</p>
+      <p>&copy; <?php echo date("Y"); ?> Main Channel Brewing. All rights reserved.</p>
+    </div>
   </div>
 </footer>
 
@@ -13,16 +16,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const noBtn = document.getElementById("age-no");
 
     if (localStorage.getItem("ageVerified") === "true") {
-        ageGate.style.display = "none";
+      ageGate.style.display = "none";
     }
 
     yesBtn.addEventListener("click", function () {
-        localStorage.setItem("ageVerified", "true");
-        ageGate.style.display = "none";
+      localStorage.setItem("ageVerified", "true");
+      ageGate.style.display = "none";
     });
 
     noBtn.addEventListener("click", function () {
-        window.location.href = "https://www.google.com";
+      window.location.href = "https://www.google.com";
     });
 });
 </script>
