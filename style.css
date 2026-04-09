@@ -1351,13 +1351,36 @@ section {
 }
 
 /* ---------- Footer ---------- */
-footer {
+footer, .site-footer {
     margin-top: 0;
-    padding: 24px 20px;
+    padding: 60px 20px 30px; /* Increased top padding for better spacing */
     text-align: center;
     color: var(--text-inverse);
-    background: linear-gradient(180deg, #1a1a1a 0%, #111111 100%);
+    background: linear-gradient(180deg, #1a1a1a 0%, var(--surface-darker) 100%);
 }
+
+.footer-legal {
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider line */
+    margin-top: 30px;
+    padding-top: 30px;
+}
+
+.responsibility-msg {
+    font-weight: 800;
+    letter-spacing: 3px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    color: var(--accent); /* Uses your orange accent color */
+    text-transform: uppercase;
+}
+
+.footer-legal p {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+}
+
 
 /* ---------- Legacy Beer Menu Page Support ---------- */
 .beer-menu-page {
