@@ -238,8 +238,8 @@ include 'header.php';
   <div class="beer-ambiance" style="background-image: url('assets/images/pages/Menu.jpg');" role="img" aria-label="Tap menu board behind the bar"></div>
   <div class="container beer-menu-container">
     <div class="section-title">
-      <h2 id="beer-menu-heading">Beer Menu</h2>
-      <p class="section-subtitle">Explore our current selection of beers on tap.</p>
+      <h2 id="beer-menu-heading">Beer & More</h2>
+      <p class="section-subtitle">Explore our current menu of beer and assorted other drinks.</p>
     </div>
 
     <?php if (empty($inventoryItems)): ?>
