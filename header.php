@@ -70,7 +70,7 @@
           <a href="#hero">Home</a>
           <a href="#about">About</a>
           <a href="#seasonal-specials">Seasonal Specials</a>
-          <a href="#beer-menu">Beer Menu</a>
+          <a href="#beer-menu">Beer & More</a>
           <a href="#merch">Merch</a>
           <a href="#locations">Locations</a>
           <a href="#contact">Contact</a>
